@@ -1,6 +1,7 @@
 import { useState } from "react";
 import wordList from "../words";
 import Card from "./Card";
+import '../styles/Grid.css'
 
 function Grid() {
 
@@ -12,7 +13,7 @@ function Grid() {
   })
     
   return (
-    <div className="Grid">
+    <div className="grid">
         {cards}
     </div>
   );

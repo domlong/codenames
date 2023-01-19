@@ -1,7 +1,9 @@
+import '../styles/Card.css'
+
 function Card(props) {
     return (
         <div className='card'>
-            {props.word}
+            <p>{props.word}</p>
         </div>
     )
 }
