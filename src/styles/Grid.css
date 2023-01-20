@@ -5,4 +5,16 @@
     gap: 20px;
     max-width: 70%;
     margin: 100px auto;
+
+    padding: 30px;
+    border: 6px solid;
+    border-radius: 30px;
+}
+
+.teamA {
+    border-color: lightcoral;
+}
+
+.teamB {
+    border-color: lightskyblue;
 }
