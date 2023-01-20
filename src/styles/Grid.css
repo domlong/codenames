@@ -9,6 +9,7 @@
     padding: 30px;
     border: 6px solid;
     border-radius: 30px;
+    cursor: pointer;
 }
 
 .teamA {

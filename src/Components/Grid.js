@@ -12,7 +12,7 @@ function Grid(props) {
 
   const cards = props.words.map((x,i) => {
     return (
-    <Card key={i} word={x} category={props.boardKey[i]}/>
+    <Card key={i} word={x} category={props.boardKey[i]} playerRole={props.playerRole} revealCard={props.revealCard} isRevealed={props.revealedCards.includes(i)} id={i}/>
     )
   })
     
