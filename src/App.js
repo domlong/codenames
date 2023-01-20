@@ -1,8 +1,8 @@
-import Grid from "./Components/Grid"; 
+import Board from "./components/Board"; 
 
 function App() {
   return (
-    <Grid />
+    <Board />
   );
 }
 
