@@ -9,7 +9,7 @@ function Board() {
   const [playerRole, setPlayerRole] = useState('operative')
   const [playerTeam, setPlayerTeam] = useState(1)
   const [startingTeam, setStartingTeam] = useState()
-  const [isRedsTurn, setIsRedsTurn] = useState()
+  const [isRedsTurn, setIsRedsTurn] = useState(false)
   const [scores, setScores] = useState({1: 0, 2: 0})
   const [words, setWords] = useState([])
   const [initialised, setInitialised] = useState(false)
@@ -36,15 +36,18 @@ function Board() {
   }
 
   const togglePlayerTeam = (event) => {
-    setPlayerTeam(event.target.value)
+    setPlayerTeam(parseInt(event.target.value))
   }
 
+  const itIsYourTurn = isRedsTurn ? playerTeam===1 : playerTeam===2;
+
   const selectCard = (cardId) => {
-    revealCard(cardId)
-    if(isRedsTurn && key[cardId] !== 1 || (!isRedsTurn && key[cardId] !== 2) ) {
-      togglePlayerTeamTurn()
+    if(itIsYourTurn) {
+        revealCard(cardId)
+        if((isRedsTurn && key[cardId] !== 1) || (!isRedsTurn && key[cardId] !== 2) ) {
+          togglePlayerTeamTurn()
+      }
     }
-    // if(checkWinCondition()) {console.log('game over')}
   }
 
   const handleFinishTurn = () => {
@@ -55,7 +58,6 @@ function Board() {
     if (!revealedCards.includes(cardId)) {
       setRevealedCards([...revealedCards, cardId])
     }
-
   }
 
   useEffect(() => updateScores(), [revealedCards])
@@ -77,8 +79,8 @@ function Board() {
   const checkWinCondition = () => {
     return (
       Object.values(scores).includes(9) ||
-      scores[1] === 8 && startingTeam===2 ||
-      scores[2] === 8 && startingTeam===1      
+      (scores[1] === 8 && startingTeam===2) ||
+      (scores[2] === 8 && startingTeam===1)     
     )
   }
 
@@ -100,6 +102,7 @@ function Board() {
     <div id='board'>
       <h2>IT IS {isRedsTurn ? "RED'S" : "BLUE'S"} TURN</h2>
       <h2>{`red: ${scores[1]}, blue: ${scores[2]}`}</h2>
+      <h2>{`TEAM IS ${playerTeam}`}</h2>
       <select value={playerRole} onChange={togglePlayerRole} >
         <option value='spymaster'>Spymaster</option>
         <option value='operative'>Operative</option>

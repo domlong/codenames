@@ -11,12 +11,12 @@ function Card(props) {
 
     const cardColour = 
     (props.isRevealed && categoryMap[props.category]) ||
-    (props.playerRole !== 'spymaster') && categoryMap[0] ||
+    ((props.playerRole !== 'spymaster') && categoryMap[0]) ||
     categoryMap[props.category];
 
     return (
         <div
-            className={`card ${cardColour}`}
+            className={`card ${cardColour} ${props.isRevealed ? 'revealed' : ''} `}
             onClick={()=>props.revealCard(props.id)}
             >
             <p>{props.word}</p>

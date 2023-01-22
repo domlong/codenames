@@ -22,3 +22,7 @@
 .card.assassin {
     background-color: grey;
 }
+
+.card.revealed {
+    font-size: 0;
+}
