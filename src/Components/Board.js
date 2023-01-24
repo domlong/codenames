@@ -76,19 +76,20 @@ function Board() {
     setIsRedsTurn(prevState => !prevState)
   }
 
-  const checkWinCondition = () => {
-    return (
-      Object.values(scores).includes(9) ||
-      (scores[1] === 8 && startingTeam===2) ||
-      (scores[2] === 8 && startingTeam===1)     
-    )
-  }
+  // const checkWinCondition = () => {
+  //   return (
+  //     Object.values(scores).includes(9) ||
+  //     (scores[1] === 8 && startingTeam===2) ||
+  //     (scores[2] === 8 && startingTeam===1)     
+  //   )
+  // }
 
   const startNewGame = () => {
     setRevealedCards([])
     generateNewBoardKey()
     shuffleArray(wordList)
     setWords(wordList.slice(0,25))
+    setScores({1: 0, 2: 0})
   }
 
   if(!initialised) {
@@ -100,9 +101,8 @@ function Board() {
     
   return (
     <div id='board'>
-      <h2>IT IS {isRedsTurn ? "RED'S" : "BLUE'S"} TURN</h2>
+      <h2>IT IS {itIsYourTurn ? "YOUR" : "YOUR OPPONENT'S"} TURN</h2>
       <h2>{`red: ${scores[1]}, blue: ${scores[2]}`}</h2>
-      <h2>{`TEAM IS ${playerTeam}`}</h2>
       <select value={playerRole} onChange={togglePlayerRole} >
         <option value='spymaster'>Spymaster</option>
         <option value='operative'>Operative</option>
