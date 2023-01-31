@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import wordList from "../words";
 import Grid from "./Grid";
+import Clue from "./Clue";
 import '../styles/Grid.css'
 
 function Board() {
@@ -10,6 +11,8 @@ function Board() {
   const [playerTeam, setPlayerTeam] = useState(1)
   const [startingTeam, setStartingTeam] = useState()
   const [isRedsTurn, setIsRedsTurn] = useState(false)
+  const [isSpymasterTurn, setIsSpymasterTurn] = useState(true)
+  const [clue, setClue] = useState(['', 0])
   const [scores, setScores] = useState({1: 0, 2: 0})
   const [words, setWords] = useState([])
   const [initialised, setInitialised] = useState(false)
@@ -27,6 +30,7 @@ function Board() {
     newKey.push(newStartingTeam)
     setStartingTeam(newStartingTeam)
     setIsRedsTurn(newStartingTeam===1)
+    setIsSpymasterTurn(true)
     shuffleArray(newKey)
     setKey(newKey)
   }
@@ -42,7 +46,7 @@ function Board() {
   const itIsYourTurn = isRedsTurn ? playerTeam===1 : playerTeam===2;
 
   const selectCard = (cardId) => {
-    if(itIsYourTurn) {
+    if(itIsYourTurn && playerRole==="operative") {
         revealCard(cardId)
         if((isRedsTurn && key[cardId] !== 1) || (!isRedsTurn && key[cardId] !== 2) ) {
           togglePlayerTeamTurn()
@@ -114,6 +118,8 @@ function Board() {
       <button onClick={handleFinishTurn}>Finish Turn</button>
       <button onClick={startNewGame}>New Game</button>
       <Grid words={words} boardKey={key} startingTeam={startingTeam} playerRole={playerRole} revealCard={selectCard} revealedCards={revealedCards}/>
+      <Clue setClue={setClue} />
+      <h2>Clue: {`${clue[0]}, ${clue[1]}`}</h2>
     </div>
   );
 }
