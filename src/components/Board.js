@@ -3,33 +3,42 @@ import wordList from "../words";
 import Grid from "./Grid";
 import Clue from "./Clue";
 import '../styles/Grid.css'
+import { PlayerRoles, Teams } from "./consts";
+
+function shuffleArray(array) {
+  const shuffledArray = array.slice()
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+  }
+  return shuffledArray;
+}
 
 function Board() {
   const [key, setKey] = useState([])
   const [revealedCards, setRevealedCards] = useState([])
-  const [playerRole, setPlayerRole] = useState('operative')
-  const [playerTeam, setPlayerTeam] = useState(1)
+  const [playerRole, setPlayerRole] = useState(PlayerRoles.Operative)
+  const [playerTeam, setPlayerTeam] = useState(Teams.RED)
   const [startingTeam, setStartingTeam] = useState()
-  const [isRedsTurn, setIsRedsTurn] = useState(false)
+  const [currentGuessingTeam, setCurrentGuessingTeam] = useState(Teams.RED)
+  // const [isRedsTurn, setIsRedsTurn] = useState(false)
   const [isSpymasterTurn, setIsSpymasterTurn] = useState(true)
   const [clue, setClue] = useState(['', 0])
-  const [scores, setScores] = useState({1: 0, 2: 0})
+  const [scores, setScores] = useState({[Teams.RED]: 0, [Teams.BLUE]: 0})
   const [words, setWords] = useState([])
-  const [initialised, setInitialised] = useState(false)
-
-  function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-  }
   
   const generateNewBoardKey = () => {
-    const newKey = [ ...Array(8).fill(1), ...Array(8).fill(2), ...Array(7).fill(0), 3]
-    const newStartingTeam = Math.floor(Math.random() * 2 + 1)
+    const newKey = [
+      ...Array(8).fill(Teams.RED),
+      ...Array(8).fill(Teams.BLUE),
+      ...Array(7).fill(Teams.GREY), 
+      Teams.BLACK
+    ]
+    const newStartingTeam = Math.random() < 0.5 ? Teams.RED : Teams.BLUE;
     newKey.push(newStartingTeam)
     setStartingTeam(newStartingTeam)
-    setIsRedsTurn(newStartingTeam===1)
+    // setIsRedsTurn(newStartingTeam===1)
+    setCurrentGuessingTeam(newStartingTeam)
     setIsSpymasterTurn(true)
     shuffleArray(newKey)
     setKey(newKey)
@@ -43,12 +52,12 @@ function Board() {
     setPlayerTeam(parseInt(event.target.value))
   }
 
-  const itIsYourTurn = isRedsTurn ? playerTeam===1 : playerTeam===2;
+  const itIsYourTurn = playerTeam === currentGuessingTeam;
 
   const selectCard = (cardId) => {
-    if(itIsYourTurn && playerRole==="operative") {
+    if(itIsYourTurn && playerRole===Teams.Operative) {
         revealCard(cardId)
-        if((isRedsTurn && key[cardId] !== 1) || (!isRedsTurn && key[cardId] !== 2) ) {
+        if((currentGuessingTeam===Teams.RED && key[cardId] !== Teams.RED) || (currentGuessingTeam===Teams.BLUE && key[cardId] !== Teams.BLUE) ) {
           togglePlayerTeamTurn()
       }
     }
@@ -77,7 +86,14 @@ function Board() {
   }
 
   const togglePlayerTeamTurn = () => {
-    setIsRedsTurn(prevState => !prevState)
+    // setIsRedsTurn(prevState => !prevState)
+    if(currentGuessingTeam === Teams.RED) {
+      setCurrentGuessingTeam(Teams.BLUE)
+    }
+    else {
+      setCurrentGuessingTeam(Teams.RED)
+    }
+
   }
 
   // const checkWinCondition = () => {
@@ -91,25 +107,22 @@ function Board() {
   const startNewGame = () => {
     setRevealedCards([])
     generateNewBoardKey()
-    shuffleArray(wordList)
-    setWords(wordList.slice(0,25))
-    setScores({1: 0, 2: 0})
+    // shuffleArray(wordList)
+    // setWords(wordList.slice(0,25))
+    setWords(shuffleArray(wordList).slice(0,25))
+    setScores({[Teams.RED]: 0, [Teams.BLUE]: 0})
   }
+  
+useEffect(() => startNewGame(), [])
 
-  if(!initialised) {
-    shuffleArray(wordList)
-    generateNewBoardKey()
-    setWords(wordList.slice(0,25))
-    setInitialised(true)
-  }
-    
   return (
     <div id='board'>
       <h2>IT IS {itIsYourTurn ? "YOUR" : "YOUR OPPONENT'S"} TURN</h2>
-      <h2>{`red: ${scores[1]}, blue: ${scores[2]}`}</h2>
+      <h2>{`red: ${scores[Teams.RED]}, blue: ${scores[Teams.BLUE]}`}</h2>
       <select value={playerRole} onChange={togglePlayerRole} >
-        <option value='spymaster'>Spymaster</option>
-        <option value='operative'>Operative</option>
+        {/* <option value='spymaster'>Spymaster</option>
+        <option value='operative'>Operative</option> */}
+        {Object.keys(PlayerRoles).map((key) => (<option value={PlayerRoles[key]}>{key}</option>))}
       </select>
       <select value={playerTeam} onChange={togglePlayerTeam} >
         <option value={1}>Red</option>
