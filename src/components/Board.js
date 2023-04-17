@@ -21,7 +21,6 @@ function Board() {
   const [playerTeam, setPlayerTeam] = useState(Teams.RED)
   const [startingTeam, setStartingTeam] = useState()
   const [currentGuessingTeam, setCurrentGuessingTeam] = useState(Teams.RED)
-  // const [isRedsTurn, setIsRedsTurn] = useState(false)
   const [isSpymasterTurn, setIsSpymasterTurn] = useState(true)
   const [clue, setClue] = useState(['', 0])
   const [scores, setScores] = useState({[Teams.RED]: 0, [Teams.BLUE]: 0})
@@ -55,7 +54,7 @@ function Board() {
   const itIsYourTurn = playerTeam === currentGuessingTeam;
 
   const selectCard = (cardId) => {
-    if(itIsYourTurn && playerRole===Teams.Operative) {
+    if(itIsYourTurn && playerRole===PlayerRoles.Operative) {
         revealCard(cardId)
         if((currentGuessingTeam===Teams.RED && key[cardId] !== Teams.RED) || (currentGuessingTeam===Teams.BLUE && key[cardId] !== Teams.BLUE) ) {
           togglePlayerTeamTurn()
@@ -107,8 +106,6 @@ function Board() {
   const startNewGame = () => {
     setRevealedCards([])
     generateNewBoardKey()
-    // shuffleArray(wordList)
-    // setWords(wordList.slice(0,25))
     setWords(shuffleArray(wordList).slice(0,25))
     setScores({[Teams.RED]: 0, [Teams.BLUE]: 0})
   }
@@ -120,13 +117,11 @@ useEffect(() => startNewGame(), [])
       <h2>IT IS {itIsYourTurn ? "YOUR" : "YOUR OPPONENT'S"} TURN</h2>
       <h2>{`red: ${scores[Teams.RED]}, blue: ${scores[Teams.BLUE]}`}</h2>
       <select value={playerRole} onChange={togglePlayerRole} >
-        {/* <option value='spymaster'>Spymaster</option>
-        <option value='operative'>Operative</option> */}
-        {Object.keys(PlayerRoles).map((key) => (<option value={PlayerRoles[key]}>{key}</option>))}
+        {Object.keys(PlayerRoles).map((key) => (<option key={key} value={PlayerRoles[key]}>{key}</option>))}
       </select>
       <select value={playerTeam} onChange={togglePlayerTeam} >
-        <option value={1}>Red</option>
-        <option value={2}>Blue</option>
+        <option value={Teams.RED}>Red</option>
+        <option value={Teams.BLUE}>Blue</option>
       </select>
       <button onClick={handleFinishTurn}>Finish Turn</button>
       <button onClick={startNewGame}>New Game</button>

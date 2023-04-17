@@ -1,5 +1,5 @@
 const PlayerRoles = {
-    Operative: 'operative',
+    Operative: 'Operative',
     Spymaster: 'Spymaster'
 };
 

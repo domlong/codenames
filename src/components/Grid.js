@@ -19,7 +19,15 @@ function Grid({
 
   const cards = words.map((word,index) => {
     return (
-    <Card key={index} word={word} category={boardKey[index]} playerRole={playerRole} revealCard={revealCard} isRevealed={revealedCards.includes(index)} id={index}/>
+      <Card
+        key={index}
+        word={word}
+        category={boardKey[index]}
+        playerRole={playerRole}
+        revealCard={revealCard}
+        isRevealed={revealedCards.includes(index)}
+        id={index}
+      />
     )
   })
     
