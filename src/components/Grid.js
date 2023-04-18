@@ -1,5 +1,6 @@
 import Card from "./Card";
 import '../styles/Grid.css'
+import { TeamStyleTags } from "./consts";
 
 function Grid({
   words,
@@ -9,13 +10,6 @@ function Grid({
   revealCard,
   revealedCards
 }) {
-
-  const categoryMap = {
-    0: 'neutral',
-    1: 'teamA',
-    2: 'teamB',
-    3: 'assassin'
-}
 
   const cards = words.map((word,index) => {
     return (
@@ -32,7 +26,7 @@ function Grid({
   })
     
   return (
-    <div className={`grid ${categoryMap[startingTeam]}`}>
+    <div className={`grid ${TeamStyleTags[startingTeam]}`}>
         {cards}
     </div>
   );

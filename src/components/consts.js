@@ -4,10 +4,17 @@ const PlayerRoles = {
 };
 
 const Teams = {
-    GREY: 0,
+    NEUTRAL: 0,
     RED: 1,
     BLUE: 2,
     BLACK: 3
 };
 
-export { PlayerRoles, Teams };
+const TeamStyleTags = {
+    0: 'neutral',
+    1: 'teamA',
+    2: 'teamB',
+    3: 'assassin'
+}
+
+export { PlayerRoles, Teams, TeamStyleTags };

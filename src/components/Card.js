@@ -1,5 +1,5 @@
 import '../styles/Card.css'
-import { PlayerRoles } from './consts';
+import { PlayerRoles, Teams, TeamStyleTags } from './consts';
 
 function Card({
     word,
@@ -12,25 +12,13 @@ function Card({
 
     function determineCardColour(isRevealed, category, playerRole) {
         if ( isRevealed ) {
-            return categoryMap[category];
+            return TeamStyleTags[category];
         }
         if ( playerRole !== PlayerRoles.Spymaster) {
-            return categoryMap[0];
+            return TeamStyleTags[Teams.NEUTRAL];
         }
-        return categoryMap[category];
+        return TeamStyleTags[category];
     }
-
-    const categoryMap = {
-        0: 'neutral',
-        1: 'teamA',
-        2: 'teamB',
-        3: 'assassin'
-    }
-
-    // const cardColour = 
-    //     (isRevealed && categoryMap[category]) ||
-    //     ((playerRole !== PlayerRoles.Spymaster) && categoryMap[0]) ||
-    //     categoryMap[category];
 
     const cardColour = determineCardColour(isRevealed, category, playerRole);
 

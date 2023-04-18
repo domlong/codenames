@@ -30,7 +30,7 @@ function Board() {
     const newKey = [
       ...Array(8).fill(Teams.RED),
       ...Array(8).fill(Teams.BLUE),
-      ...Array(7).fill(Teams.GREY), 
+      ...Array(7).fill(Teams.NEUTRAL), 
       Teams.BLACK
     ]
     const newStartingTeam = Math.random() < 0.5 ? Teams.RED : Teams.BLUE;
@@ -39,8 +39,7 @@ function Board() {
     // setIsRedsTurn(newStartingTeam===1)
     setCurrentGuessingTeam(newStartingTeam)
     setIsSpymasterTurn(true)
-    shuffleArray(newKey)
-    setKey(newKey)
+    setKey(shuffleArray(newKey))
   }
 
   const togglePlayerRole = (event) => {
@@ -85,7 +84,6 @@ function Board() {
   }
 
   const togglePlayerTeamTurn = () => {
-    // setIsRedsTurn(prevState => !prevState)
     if(currentGuessingTeam === Teams.RED) {
       setCurrentGuessingTeam(Teams.BLUE)
     }
@@ -95,13 +93,13 @@ function Board() {
 
   }
 
-  // const checkWinCondition = () => {
-  //   return (
-  //     Object.values(scores).includes(9) ||
-  //     (scores[1] === 8 && startingTeam===2) ||
-  //     (scores[2] === 8 && startingTeam===1)     
-  //   )
-  // }
+  function checkWinCondition() {
+    return (
+      Object.values(scores).includes(9)
+      || (scores[Teams.RED] === 8 && startingTeam === Teams.RED)
+      || (scores[Teams.BLUE] === 8 && startingTeam === Teams.BLUE)
+    )
+  }
 
   const startNewGame = () => {
     setRevealedCards([])
@@ -110,12 +108,20 @@ function Board() {
     setScores({[Teams.RED]: 0, [Teams.BLUE]: 0})
   }
   
-useEffect(() => startNewGame(), [])
+  useEffect(() => startNewGame(), [])
+
+  if (checkWinCondition) {
+
+  }
+
+  const winner = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+  const winnerName = Object.keys(Teams).find(key => Teams[key] === parseInt(winner));
 
   return (
     <div id='board'>
       <h2>IT IS {itIsYourTurn ? "YOUR" : "YOUR OPPONENT'S"} TURN</h2>
       <h2>{`red: ${scores[Teams.RED]}, blue: ${scores[Teams.BLUE]}`}</h2>
+      <h2>{`winner: ${winnerName}`}</h2>
       <select value={playerRole} onChange={togglePlayerRole} >
         {Object.keys(PlayerRoles).map((key) => (<option key={key} value={PlayerRoles[key]}>{key}</option>))}
       </select>
