@@ -1,22 +1,33 @@
 import '../styles/Grid.css'
 import { useState } from "react";
 
-function Clue(props) {
+function Clue({
+  clue,
+  setClue,
+  isVisible
+}) {
 
   const [clueText, setClueText] = useState('')
 
-  const nums = [ ...Array.from({length: 9}, (_, i) => i + 1), 0]
+  const nums = [ 0, ...Array.from({length: 9}, (_, i) => i + 1)]
 
-  const buttons = nums.map((x,i) => {
+  const waitingForClue = clue[0] === '';
+
+  const buttons = nums.map((num, index) => {
     return (
-      <button key={i} onClick={()=>props.setClue([clueText,x])}>{x}</button>
+      <button key={index} onClick={()=>setClue([clueText, num])}>{num}</button>
     )
   })
     
   return (
     <div className={`clue`}>
-      <input onChange={e => setClueText(e.target.value)}/>
-        {buttons}
+      { isVisible &&
+        <div>
+          <input onChange={e => setClueText(e.target.value)}/>
+          {buttons}
+          </div>
+      }
+      <h2>{ waitingForClue ? 'Waiting for clue...' : `Clue: ${clue[0]}, ${clue[1]}`}</h2>
     </div>
   );
 }
