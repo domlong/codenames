@@ -90,7 +90,7 @@ function Board() {
     else {
       setCurrentGuessingTeam(Teams.RED)
     }
-
+    setClue(['', 0])
   }
 
   function checkWinCondition() {
@@ -114,6 +114,7 @@ function Board() {
 
   }
 
+  const waitingForClue = clue[0] === '';
   const winner = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
   const winnerName = Object.keys(Teams).find(key => Teams[key] === parseInt(winner));
 
@@ -132,8 +133,10 @@ function Board() {
       <button onClick={handleFinishTurn}>Finish Turn</button>
       <button onClick={startNewGame}>New Game</button>
       <Grid words={words} boardKey={key} startingTeam={startingTeam} playerRole={playerRole} revealCard={selectCard} revealedCards={revealedCards}/>
-      <Clue setClue={setClue} />
-      <h2>Clue: {`${clue[0]}, ${clue[1]}`}</h2>
+      { playerRole === PlayerRoles.Spymaster
+        && <Clue setClue={setClue} />
+      }
+      <h2>{ waitingForClue ? 'Waiting for clue...' : `Clue: ${clue[0]}, ${clue[1]}`}</h2>
     </div>
   );
 }
