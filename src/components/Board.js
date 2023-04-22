@@ -24,6 +24,7 @@ function Board() {
   const [clue, setClue] = useState(['', 0])
   const [scores, setScores] = useState({[Teams.RED]: 0, [Teams.BLUE]: 0})
   const [words, setWords] = useState([])
+  const [isGameOver, setIsGameOver] = useState(false)
   
   const generateNewBoardKey = () => {
     const newKey = [
@@ -72,6 +73,12 @@ function Board() {
 
   const updateScores = () => {
     const lastCardCategory = key[revealedCards.slice(-1)]
+    if(lastCardCategory === 3) {
+      setScores({
+        ...scores,
+        [currentGuessingTeam]: 9
+      })
+    }
     if([1,2].includes(lastCardCategory)) {
       setScores({
         ...scores,
@@ -91,7 +98,6 @@ function Board() {
   }
 
   function checkWinCondition() {
-
     return (
       Object.values(scores).includes(9)
       || (scores[Teams.RED] === 8 && startingTeam === Teams.BLUE)
@@ -107,8 +113,9 @@ function Board() {
   }
   
   const gameOver = () => {
+    setIsGameOver(true)
     // disable all buttons except NEW GAME
-    // add logic for when team flis the assassin card (score is)
+    // add logic for when team flis the assassin card (score is )
     
     // declare winner
 
@@ -117,23 +124,27 @@ function Board() {
 
   useEffect(() => startNewGame(), [])
 
-  if (checkWinCondition) {
+  if (checkWinCondition() && !isGameOver) {
     gameOver()
   }
 
+  function getTeamName(teamNum) {
+    return Object.keys(Teams).find(key => Teams[key] === parseInt(teamNum))
+  }
 
-  const keepo = checkWinCondition()
-
-  // const winner = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
-  const winner = Math.max(...Object.values(scores))
-  const winnerName = Object.keys(Teams).find(key => Teams[key] === parseInt(winner));
+  const winner = Object.keys(scores).reduce((a,b) => scores[a] > scores[b] ? a : b );
 
   return (
     <div id='board'>
+      <h2>YOU ARE TEAM {getTeamName(playerTeam)}</h2>
       <h2>IT IS {itIsYourTurn ? "YOUR TEAM'S" : "YOUR OPPONENT'S"} TURN</h2>
       <h2>{`red: ${scores[Teams.RED]}, blue: ${scores[Teams.BLUE]}`}</h2>
-      <h2>{`winner: ${winnerName}`}</h2>
-      <h2>{`keepo: ${keepo}`}</h2>
+      {isGameOver &&
+        <div>
+          <h2>GAME OVER</h2>
+          <h2>{`${getTeamName(winner)} WINS!!`}</h2>
+        </div>
+      }
       <select value={playerRole} onChange={togglePlayerRole} >
         {Object.keys(PlayerRoles).map((key) => (<option key={key} value={PlayerRoles[key]}>{key}</option>))}
       </select>
