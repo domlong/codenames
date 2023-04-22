@@ -51,6 +51,8 @@ function Board() {
   const itIsYourTurn = playerTeam === currentGuessingTeam;
 
   const selectCard = (cardId) => {
+    if (isGameOver)
+      return
     if(itIsYourTurn && playerRole===PlayerRoles.Operative) {
         revealCard(cardId)
         if((currentGuessingTeam===Teams.RED && key[cardId] !== Teams.RED) || (currentGuessingTeam===Teams.BLUE && key[cardId] !== Teams.BLUE) ) {
