@@ -21,7 +21,6 @@ function Board() {
   const [playerTeam, setPlayerTeam] = useState(Teams.RED)
   const [startingTeam, setStartingTeam] = useState()
   const [currentGuessingTeam, setCurrentGuessingTeam] = useState(Teams.RED)
-  const [isSpymasterTurn, setIsSpymasterTurn] = useState(true)
   const [clue, setClue] = useState(['', 0])
   const [scores, setScores] = useState({[Teams.RED]: 0, [Teams.BLUE]: 0})
   const [words, setWords] = useState([])
@@ -36,9 +35,7 @@ function Board() {
     const newStartingTeam = Math.random() < 0.5 ? Teams.RED : Teams.BLUE;
     newKey.push(newStartingTeam)
     setStartingTeam(newStartingTeam)
-    // setIsRedsTurn(newStartingTeam===1)
     setCurrentGuessingTeam(newStartingTeam)
-    setIsSpymasterTurn(true)
     setKey(shuffleArray(newKey))
   }
 
@@ -94,10 +91,11 @@ function Board() {
   }
 
   function checkWinCondition() {
+
     return (
       Object.values(scores).includes(9)
-      || (scores[Teams.RED] === 8 && startingTeam === Teams.RED)
-      || (scores[Teams.BLUE] === 8 && startingTeam === Teams.BLUE)
+      || (scores[Teams.RED] === 8 && startingTeam === Teams.BLUE)
+      || (scores[Teams.BLUE] === 8 && startingTeam === Teams.RED)
     )
   }
 
@@ -108,20 +106,34 @@ function Board() {
     setScores({[Teams.RED]: 0, [Teams.BLUE]: 0})
   }
   
+  const gameOver = () => {
+    // disable all buttons except NEW GAME
+    // add logic for when team flis the assassin card (score is)
+    
+    // declare winner
+
+    // reveal all cards to everyone?
+  }
+
   useEffect(() => startNewGame(), [])
 
   if (checkWinCondition) {
-
+    gameOver()
   }
 
-  const winner = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+
+  const keepo = checkWinCondition()
+
+  // const winner = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+  const winner = Math.max(...Object.values(scores))
   const winnerName = Object.keys(Teams).find(key => Teams[key] === parseInt(winner));
 
   return (
     <div id='board'>
-      <h2>IT IS {itIsYourTurn ? "YOUR" : "YOUR OPPONENT'S"} TURN</h2>
+      <h2>IT IS {itIsYourTurn ? "YOUR TEAM'S" : "YOUR OPPONENT'S"} TURN</h2>
       <h2>{`red: ${scores[Teams.RED]}, blue: ${scores[Teams.BLUE]}`}</h2>
       <h2>{`winner: ${winnerName}`}</h2>
+      <h2>{`keepo: ${keepo}`}</h2>
       <select value={playerRole} onChange={togglePlayerRole} >
         {Object.keys(PlayerRoles).map((key) => (<option key={key} value={PlayerRoles[key]}>{key}</option>))}
       </select>
@@ -131,8 +143,22 @@ function Board() {
       </select>
       <button onClick={handleFinishTurn}>Finish Turn</button>
       <button onClick={startNewGame}>New Game</button>
-      <Grid words={words} boardKey={key} startingTeam={startingTeam} playerRole={playerRole} revealCard={selectCard} revealedCards={revealedCards}/>
-      <Clue clue={clue} setClue={setClue} isVisible={playerRole === PlayerRoles.Spymaster} />
+      <Grid
+        words={words}
+        boardKey={key}
+        startingTeam={startingTeam}
+        playerRole={playerRole}
+        revealCard={selectCard}
+        revealedCards={revealedCards}
+      />
+      <Clue
+        clue={clue}
+        setClue={setClue}
+        isVisible={
+          playerRole === PlayerRoles.Spymaster
+          && playerTeam === currentGuessingTeam
+        }
+      />
 
     </div>
   );
