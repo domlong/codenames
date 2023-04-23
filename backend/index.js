@@ -1,6 +1,18 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json())
+
+const requestLogger = (request, response, next) => {
+    console.log('Method:', request.method)
+    console.log('Path:  ', request.path)
+    console.log('Body:  ', request.body)
+    console.log('---')
+    next()
+  }
+
+app.use(requestLogger)
+
 const Teams = {
     NEUTRAL: 0,
     RED: 1,
@@ -57,7 +69,10 @@ app.get('/boardState', (request, response) => {
 
 // post game state
 app.post('/boardState', (request, response) => {
-    console.log(request.body)
+    // revealedCards = request.body.revealedCards
+    revealedCards.push(request.body.revealedCards)
+    response.send('Nice going')
+    // console.log(request.body)
 })
 
 const PORT = 8080
