@@ -7,6 +7,7 @@ function Card({
     playerRole,
     revealCard,
     isRevealed,
+    isDisabled,
     id
 }) {
 
@@ -23,12 +24,13 @@ function Card({
     const cardColour = determineCardColour(isRevealed, category, playerRole);
 
     return (
-        <div
+        <button
             className={`card ${cardColour} ${isRevealed ? 'revealed' : ''} `}
             onClick={()=>revealCard(id)}
+            disabled={isDisabled}
         >
             <p>{word}</p>
-        </div>
+        </button>
     )
 }
 

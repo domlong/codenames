@@ -8,7 +8,8 @@ function Grid({
   startingTeam,
   playerRole,
   revealCard,
-  revealedCards
+  revealedCards,
+  isGameOver
 }) {
 
   const cards = words.map((word,index) => {
@@ -20,6 +21,7 @@ function Grid({
         playerRole={playerRole}
         revealCard={revealCard}
         isRevealed={revealedCards.includes(index)}
+        isDisabled={isGameOver}
         id={index}
       />
     )

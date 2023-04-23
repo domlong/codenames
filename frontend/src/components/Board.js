@@ -51,8 +51,6 @@ function Board() {
   const itIsYourTurn = playerTeam === currentGuessingTeam;
 
   const selectCard = (cardId) => {
-    if (isGameOver)
-      return
     if(itIsYourTurn && playerRole===PlayerRoles.Operative) {
         revealCard(cardId)
         if((currentGuessingTeam===Teams.RED && key[cardId] !== Teams.RED) || (currentGuessingTeam===Teams.BLUE && key[cardId] !== Teams.BLUE) ) {
@@ -116,11 +114,6 @@ function Board() {
   
   const gameOver = () => {
     setIsGameOver(true)
-    // disable all buttons except NEW GAME
-    // add logic for when team flis the assassin card (score is )
-    
-    // declare winner
-
     // reveal all cards to everyone?
   }
 
@@ -163,6 +156,7 @@ function Board() {
         playerRole={playerRole}
         revealCard={selectCard}
         revealedCards={revealedCards}
+        isGameOver={isGameOver}
       />
       <Clue
         clue={clue}

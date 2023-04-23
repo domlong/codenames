@@ -1,3 +1,7 @@
+/* button {
+    all: unset;
+} */
+
 .card {
     box-shadow: 2px 3px 8px 0 black;
     min-height: 100px;
@@ -6,6 +10,8 @@
     justify-content: center;
     border-radius: 10px;
     user-select: none;
+    font-size: 20px;
+    /* font-family: 'Courier New', Courier, monospace; */
 }
 
 .card.teamA {
