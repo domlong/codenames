@@ -143,6 +143,7 @@ function Board() {
     generateNewBoardKey()
     setWords(shuffleArray(wordList).slice(0,25))
     setScores({[Teams.RED]: 0, [Teams.BLUE]: 0})
+    setIsGameOver(false)
   }
   
   const gameOver = () => {
