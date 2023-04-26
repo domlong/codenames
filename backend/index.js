@@ -46,7 +46,7 @@ function generateNewBoardState() {
 
     boardKey = newKey;
 
-    newBoardState = {
+    const newBoardState = {
         boardKey: shuffleArray(newKey),
         startingTeam: newStartingTeam,
         revealedCards: revealedCards
@@ -62,7 +62,7 @@ app.get('/', (request, response) => {
 
 // post to new game endpoint
 app.get('/newGame', (request, response) => {
-    newBoardState = generateNewBoardState();
+    const newBoardState = generateNewBoardState();
     response.json(newBoardState)
 })
 
@@ -73,8 +73,7 @@ app.get('/boardState', (request, response) => {
 
 // post game state
 app.post('/boardState', (request, response) => {
-    console.log(request.body)
-    // revealedCards.push(request.body.latestCard)
+    revealedCards = request.body.revealedCards
     response.json('Nice going')
 })
 

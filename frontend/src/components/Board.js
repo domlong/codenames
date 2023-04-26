@@ -47,7 +47,11 @@ function Board() {
 
   const fetchBoardState = () => {
     fetch(dataUrl).then(response => response.json()).then(data => {
-      // console.log(data)
+      console.log(data)
+      setRevealedCards(data)
+      // if((key[revealedCards[-1]] !== currentGuessingTeam)) {
+      //   togglePlayerTeamTurn()
+      // }
     })
   }
   setInterval(fetchBoardState, waitTime)
@@ -62,15 +66,13 @@ function Board() {
         body: JSON.stringify(data),
       });
   
-      // const result = await response.json();
       const result = await response.json();
       console.log("Success:", result);
     } catch (error) {
       console.error("Error:", error);
     }
   }
-  
-  // const data = { username: "example" };  
+
 
   const togglePlayerRole = (event) => {
     setPlayerRole(event.target.value)
@@ -84,9 +86,9 @@ function Board() {
 
   const selectCard = (cardId) => {
     if(itIsYourTurn && playerRole===PlayerRoles.Operative) {
-        revealCard(cardId)
-        if((currentGuessingTeam===Teams.RED && key[cardId] !== Teams.RED) || (currentGuessingTeam===Teams.BLUE && key[cardId] !== Teams.BLUE) ) {
-          togglePlayerTeamTurn()
+      revealCard(cardId)
+      if((currentGuessingTeam !== key[cardId]) ) {
+        togglePlayerTeamTurn()
       }
     }
   }
@@ -97,8 +99,8 @@ function Board() {
 
   const revealCard = (cardId) => {
     if (!revealedCards.includes(cardId)) {
+      postJSON({ revealedCards: [...revealedCards, cardId] })
       setRevealedCards([...revealedCards, cardId])
-      postJSON({ latestCard: cardId });
     }
   }
 
