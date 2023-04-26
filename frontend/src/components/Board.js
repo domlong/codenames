@@ -22,24 +22,8 @@ function Board() {
   const [startingTeam, setStartingTeam] = useState()
   const [currentGuessingTeam, setCurrentGuessingTeam] = useState(Teams.RED)
   const [clue, setClue] = useState(['', 0])
-  const [scores, setScores] = useState({[Teams.RED]: 0, [Teams.BLUE]: 0})
   const [words, setWords] = useState([])
   const [isGameOver, setIsGameOver] = useState(false)
-  
-  const generateNewBoardKey = () => {
-    const newKey = [
-      ...Array(8).fill(Teams.RED),
-      ...Array(8).fill(Teams.BLUE),
-      ...Array(7).fill(Teams.NEUTRAL), 
-      Teams.BLACK
-    ]
-    const newStartingTeam = Math.random() < 0.5 ? Teams.RED : Teams.BLUE;
-    newKey.push(newStartingTeam)
-    setStartingTeam(newStartingTeam)
-    setCurrentGuessingTeam(newStartingTeam)
-    setKey(shuffleArray(newKey))
-  }
-
 
   // networking stuff
   const waitTime = 5000
@@ -48,13 +32,28 @@ function Board() {
   const fetchBoardState = () => {
     fetch(dataUrl).then(response => response.json()).then(data => {
       console.log(data)
-      setRevealedCards(data)
-      // if((key[revealedCards[-1]] !== currentGuessingTeam)) {
-      //   togglePlayerTeamTurn()
-      // }
+      setRevealedCards(data.revealedCards)
+      setCurrentGuessingTeam(data.currentGuessingTeam)
     })
   }
-  setInterval(fetchBoardState, waitTime)
+
+  const fetchNewGame = () => {
+    const newGameUrl = 'http://localhost:8080/newGame'
+    fetch(newGameUrl).then(response => response.json()).then(data => {
+      console.log(data)
+      setRevealedCards([])
+      setStartingTeam(data.startingTeam)
+      setCurrentGuessingTeam(data.currentGuessingTeam)
+      setKey(data.boardKey)
+    })
+  }
+
+  useEffect(() => fetchNewGame, [])
+  useEffect(() => {
+    const intervalId = setInterval(fetchBoardState, waitTime);
+      return () => clearInterval(intervalId)
+  }, [])
+  
 
   async function postJSON(data) {
     try {
@@ -99,28 +98,29 @@ function Board() {
 
   const revealCard = (cardId) => {
     if (!revealedCards.includes(cardId)) {
-      postJSON({ revealedCards: [...revealedCards, cardId] })
       setRevealedCards([...revealedCards, cardId])
     }
   }
 
-  useEffect(() => updateScores(), [revealedCards])
-
-  const updateScores = () => {
+  const calculateScores = () => {
     const lastCardCategory = key[revealedCards.slice(-1)]
-    if(lastCardCategory === 3) {
-      setScores({
-        ...scores,
-        [currentGuessingTeam]: 9
-      })
+    const scores = {
+      [Teams.RED]: revealedCards
+        .map(cardId => key[cardId])
+        .filter(teamCard => teamCard === Teams.RED)
+        .length,
+      [Teams.BLUE]: revealedCards
+        .map(cardId => key[cardId])
+        .filter(teamCard => teamCard === Teams.BLUE)
+        .length
     }
-    if([1,2].includes(lastCardCategory)) {
-      setScores({
-        ...scores,
-        [lastCardCategory]: scores[lastCardCategory] + 1
-      })
+    if(lastCardCategory === Teams.BLACK) {
+      scores[currentGuessingTeam] = 9
     }
+    return scores
   }
+
+  const scores = calculateScores();
 
   const togglePlayerTeamTurn = () => {
     if(currentGuessingTeam === Teams.RED) {
@@ -141,10 +141,8 @@ function Board() {
   }
 
   const startNewGame = () => {
-    setRevealedCards([])
-    generateNewBoardKey()
+    fetchNewGame()
     setWords(shuffleArray(wordList).slice(0,25))
-    setScores({[Teams.RED]: 0, [Teams.BLUE]: 0})
     setIsGameOver(false)
   }
   
@@ -164,6 +162,29 @@ function Board() {
   }
 
   const winner = Object.keys(scores).reduce((a,b) => scores[a] > scores[b] ? a : b );
+
+  useEffect(() => {
+    async function postJSON(data) {
+      try {
+        const response = await fetch(dataUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+    
+        const result = await response.json();
+        console.log("Success:", result);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+    postJSON({ 
+        revealedCards: revealedCards,
+        currentGuessingTeam: currentGuessingTeam
+    })
+  }, [revealedCards, currentGuessingTeam] )
 
   return (
     <div id='board'>

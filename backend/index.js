@@ -32,7 +32,8 @@ function shuffleArray(array) {
 }
 
 let boardKey = [];
-let revealedCards = [];
+let boardState = {};
+let gameId = 0;
 
 function generateNewBoardState() {
     const newKey = [
@@ -49,12 +50,12 @@ function generateNewBoardState() {
     const newBoardState = {
         boardKey: shuffleArray(newKey),
         startingTeam: newStartingTeam,
-        revealedCards: revealedCards
+        revealedCards: [],
+        currentGuessingTeam: newStartingTeam,
+        gameId: gameId + 1
     }
     return newBoardState
 }
-
-generateNewBoardState()
 
 app.get('/', (request, response) => {
     response.send(`<h1>pog it's codenames</h1>`)
@@ -62,18 +63,23 @@ app.get('/', (request, response) => {
 
 // post to new game endpoint
 app.get('/newGame', (request, response) => {
-    const newBoardState = generateNewBoardState();
-    response.json(newBoardState)
+    boardState = generateNewBoardState();
+    response.json(boardState)
 })
 
 // get game state
 app.get('/boardState', (request, response) => {
-    response.json(revealedCards)
+    response.json(boardState)
 })
 
 // post game state
 app.post('/boardState', (request, response) => {
-    revealedCards = request.body.revealedCards
+    boardState.revealedCards = request.body.revealedCards
+    if(request.body.currentGuessingTeam) {
+        boardState.currentGuessingTeam = request.body.currentGuessingTeam
+    }
+    // boardState.currentGuessingTeam = request.body.currentGuessingTeam
+
     response.json('Nice going')
 })
 
