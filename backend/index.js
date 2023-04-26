@@ -1,6 +1,8 @@
 const express = require('express')
+const cors = require('cors')
 const app = express()
 
+app.use(cors({origin: 'http://localhost:3000'}));
 app.use(express.json())
 
 const requestLogger = (request, response, next) => {
@@ -30,7 +32,7 @@ function shuffleArray(array) {
 }
 
 let boardKey = [];
-let revealedCards = [ 0, 1, 2, 0, 1, 2, 3];
+let revealedCards = [];
 
 function generateNewBoardState() {
     const newKey = [
@@ -52,6 +54,8 @@ function generateNewBoardState() {
     return newBoardState
 }
 
+generateNewBoardState()
+
 app.get('/', (request, response) => {
     response.send(`<h1>pog it's codenames</h1>`)
 })
@@ -69,10 +73,9 @@ app.get('/boardState', (request, response) => {
 
 // post game state
 app.post('/boardState', (request, response) => {
-    // revealedCards = request.body.revealedCards
-    revealedCards.push(request.body.revealedCards)
-    response.send('Nice going')
-    // console.log(request.body)
+    console.log(request.body)
+    // revealedCards.push(request.body.latestCard)
+    response.json('Nice going')
 })
 
 const PORT = 8080

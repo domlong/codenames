@@ -2,5 +2,5 @@ POST http://localhost:8080/boardState HTTP/1.1
 content-type: application/json
 
 {
-    "revealedCards": 1
+    latestCard: 1
 }

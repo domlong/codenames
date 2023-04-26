@@ -40,6 +40,38 @@ function Board() {
     setKey(shuffleArray(newKey))
   }
 
+
+  // networking stuff
+  const waitTime = 5000
+  const dataUrl = 'http://localhost:8080/boardState'
+
+  const fetchBoardState = () => {
+    fetch(dataUrl).then(response => response.json()).then(data => {
+      // console.log(data)
+    })
+  }
+  setInterval(fetchBoardState, waitTime)
+
+  async function postJSON(data) {
+    try {
+      const response = await fetch(dataUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+  
+      // const result = await response.json();
+      const result = await response.json();
+      console.log("Success:", result);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+  
+  // const data = { username: "example" };  
+
   const togglePlayerRole = (event) => {
     setPlayerRole(event.target.value)
   }
@@ -66,6 +98,7 @@ function Board() {
   const revealCard = (cardId) => {
     if (!revealedCards.includes(cardId)) {
       setRevealedCards([...revealedCards, cardId])
+      postJSON({ latestCard: cardId });
     }
   }
 
