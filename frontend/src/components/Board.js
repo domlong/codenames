@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import wordList from "../words";
+// import wordList from "../words";
 import Grid from "./Grid";
 import Clue from "./Clue";
 import '../styles/Grid.css'
@@ -15,6 +15,7 @@ function shuffleArray(array) {
 }
 
 function Board() {
+  // replace a bunch of these with generic board state to pass between server?
   const [key, setKey] = useState([])
   const [revealedCards, setRevealedCards] = useState([])
   const [playerRole, setPlayerRole] = useState(PlayerRoles.Operative)
@@ -24,6 +25,8 @@ function Board() {
   const [clue, setClue] = useState(['', 0])
   const [words, setWords] = useState([])
   const [isGameOver, setIsGameOver] = useState(false)
+  const [gameIdInput, setGameIdInput] = useState(0)
+  const [gameId, setGameId] = useState(0)
 
   // networking stuff
   const waitTime = 5000
@@ -32,6 +35,12 @@ function Board() {
   const fetchBoardState = () => {
     fetch(dataUrl).then(response => response.json()).then(data => {
       console.log(data)
+      if(JSON.stringify(data.boardKey) !== JSON.stringify(key)) {
+        setKey(data.boardKey)
+      }
+      if(data.gameId !== gameId) {
+        setGameId(data.gameId)
+      }      
       if(JSON.stringify(data.revealedCards) !== JSON.stringify(revealedCards)) {
         setRevealedCards(data.revealedCards)
       }
@@ -39,20 +48,22 @@ function Board() {
       if(data.currentGuessingTeam !== currentGuessingTeam) {
         setCurrentGuessingTeam(data.currentGuessingTeam)
       }
-      if(data.clue !== clue) {
+      if(JSON.stringify(data.clue) !== JSON.stringify(clue)) {
         setClue(data.clue)
       }
+      setWords(data.words)
+      setStartingTeam(data.startingTeam)
     })
   }
 
   const fetchNewGame = () => {
     const newGameUrl = 'http://localhost:8080/newGame'
     fetch(newGameUrl).then(response => response.json()).then(data => {
-      console.log(data)
       setRevealedCards([])
       setStartingTeam(data.startingTeam)
       setCurrentGuessingTeam(data.currentGuessingTeam)
       setKey(data.boardKey)
+      setWords(data.words)
     })
   }
 
@@ -91,19 +102,6 @@ function Board() {
     }
   }
 
-  // const calculateScores = () => {
-  //   const lastCardCategory = key[revealedCards.slice(-1)]
-  //   const revealedCardColours = revealedCards.map(cardId => key[cardId])
-  //   const scores = {
-  //     [Teams.RED]: revealedCardColours.filter(teamCard => teamCard === Teams.RED).length,
-  //     [Teams.BLUE]: revealedCardColours.filter(teamCard => teamCard === Teams.BLUE).length
-  //   }
-  //   if(lastCardCategory === Teams.BLACK) {
-  //     scores[currentGuessingTeam] = 9
-  //   }
-  //   return scores
-  // }
-
   const scores = useMemo(() => {
     const lastCardCategory = key[revealedCards.slice(-1)]
     const revealedCardColours = revealedCards.map(cardId => key[cardId])
@@ -137,7 +135,7 @@ function Board() {
 
   const startNewGame = () => {
     fetchNewGame()
-    setWords(shuffleArray(wordList).slice(0,25))
+    // setWords(shuffleArray(wordList).slice(0,25))
     setIsGameOver(false)
   }
   
@@ -146,7 +144,7 @@ function Board() {
     // reveal all cards to everyone?
   }
 
-  useEffect(() => startNewGame(), [])
+  // useEffect(() => startNewGame(), [])
 
   if (checkWinCondition() && !isGameOver) {
     gameOver()
@@ -157,6 +155,10 @@ function Board() {
   }
 
   const winner = Object.keys(scores).reduce((a,b) => scores[a] > scores[b] ? a : b );
+
+  const joinGame = () => {
+
+  }
 
   useEffect(() => {
     async function postJSON(data) {
@@ -183,7 +185,14 @@ function Board() {
   }, [revealedCards, currentGuessingTeam, clue] )
 
   return (
+
     <div id='board'>
+      <div id='splash'>
+        <input type="number" onChange={e => setGameIdInput(e.target.value)}></input>
+        <button onClick={fetchBoardState}>Join</button>
+        <button onClick={startNewGame}>Host Game</button>
+        <h2>{`Game ID: ${gameId}`}</h2>
+      </div>
       <h2 style={{ color: `${getTeamName(playerTeam)}`}}>YOU ARE TEAM {getTeamName(playerTeam)}</h2>
       {!isGameOver &&
       <div>

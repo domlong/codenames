@@ -1,8 +1,11 @@
 const express = require('express')
 const cors = require('cors')
+const wordList = require('./words').words
+
 const app = express()
 
-app.use(cors({origin: 'http://localhost:3000'}));
+// app.use(cors({origin: 'http://localhost:3000'}));
+app.use(cors());
 app.use(express.json())
 
 const requestLogger = (request, response, next) => {
@@ -31,9 +34,11 @@ function shuffleArray(array) {
     return shuffledArray;
 }
 
-let boardKey = [];
 let boardState = {};
-let gameId = 0;
+
+function generateGameId() {
+    return Math.floor(Math.random() * 100000);
+}
 
 function generateNewBoardState() {
     const newKey = [
@@ -45,15 +50,14 @@ function generateNewBoardState() {
     const newStartingTeam = Math.random() < 0.5 ? Teams.RED : Teams.BLUE;
     newKey.push(newStartingTeam)
 
-    boardKey = newKey;
-
     const newBoardState = {
         boardKey: shuffleArray(newKey),
+        words: shuffleArray(wordList).slice(0,25),
         startingTeam: newStartingTeam,
         revealedCards: [],
         currentGuessingTeam: newStartingTeam,
         clue: ['', 0],
-        gameId: gameId + 1
+        gameId: generateGameId()
     }
     return newBoardState
 }
@@ -86,4 +90,4 @@ app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
 
-// add role + team select at start of front-end app
+// add role + team + gameID splash screen at start of front-end app
