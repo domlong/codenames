@@ -52,6 +52,7 @@ function generateNewBoardState() {
         startingTeam: newStartingTeam,
         revealedCards: [],
         currentGuessingTeam: newStartingTeam,
+        clue: ['', 0],
         gameId: gameId + 1
     }
     return newBoardState
@@ -75,11 +76,8 @@ app.get('/boardState', (request, response) => {
 // post game state
 app.post('/boardState', (request, response) => {
     boardState.revealedCards = request.body.revealedCards
-    if(request.body.currentGuessingTeam) {
-        boardState.currentGuessingTeam = request.body.currentGuessingTeam
-    }
-    // boardState.currentGuessingTeam = request.body.currentGuessingTeam
-
+    boardState.currentGuessingTeam = request.body.currentGuessingTeam
+    boardState.clue = request.body.clue
     response.json('Nice going')
 })
 

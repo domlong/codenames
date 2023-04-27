@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import wordList from "../words";
 import Grid from "./Grid";
 import Clue from "./Clue";
@@ -32,8 +32,16 @@ function Board() {
   const fetchBoardState = () => {
     fetch(dataUrl).then(response => response.json()).then(data => {
       console.log(data)
-      setRevealedCards(data.revealedCards)
-      setCurrentGuessingTeam(data.currentGuessingTeam)
+      if(JSON.stringify(data.revealedCards) !== JSON.stringify(revealedCards)) {
+        setRevealedCards(data.revealedCards)
+      }
+      
+      if(data.currentGuessingTeam !== currentGuessingTeam) {
+        setCurrentGuessingTeam(data.currentGuessingTeam)
+      }
+      if(data.clue !== clue) {
+        setClue(data.clue)
+      }
     })
   }
 
@@ -53,25 +61,6 @@ function Board() {
     const intervalId = setInterval(fetchBoardState, waitTime);
       return () => clearInterval(intervalId)
   }, [])
-  
-
-  async function postJSON(data) {
-    try {
-      const response = await fetch(dataUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-  
-      const result = await response.json();
-      console.log("Success:", result);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }
-
 
   const togglePlayerRole = (event) => {
     setPlayerRole(event.target.value)
@@ -102,25 +91,31 @@ function Board() {
     }
   }
 
-  const calculateScores = () => {
+  // const calculateScores = () => {
+  //   const lastCardCategory = key[revealedCards.slice(-1)]
+  //   const revealedCardColours = revealedCards.map(cardId => key[cardId])
+  //   const scores = {
+  //     [Teams.RED]: revealedCardColours.filter(teamCard => teamCard === Teams.RED).length,
+  //     [Teams.BLUE]: revealedCardColours.filter(teamCard => teamCard === Teams.BLUE).length
+  //   }
+  //   if(lastCardCategory === Teams.BLACK) {
+  //     scores[currentGuessingTeam] = 9
+  //   }
+  //   return scores
+  // }
+
+  const scores = useMemo(() => {
     const lastCardCategory = key[revealedCards.slice(-1)]
+    const revealedCardColours = revealedCards.map(cardId => key[cardId])
     const scores = {
-      [Teams.RED]: revealedCards
-        .map(cardId => key[cardId])
-        .filter(teamCard => teamCard === Teams.RED)
-        .length,
-      [Teams.BLUE]: revealedCards
-        .map(cardId => key[cardId])
-        .filter(teamCard => teamCard === Teams.BLUE)
-        .length
+      [Teams.RED]: revealedCardColours.filter(teamCard => teamCard === Teams.RED).length,
+      [Teams.BLUE]: revealedCardColours.filter(teamCard => teamCard === Teams.BLUE).length
     }
     if(lastCardCategory === Teams.BLACK) {
       scores[currentGuessingTeam] = 9
     }
     return scores
-  }
-
-  const scores = calculateScores();
+  }, [revealedCards, currentGuessingTeam, key])
 
   const togglePlayerTeamTurn = () => {
     if(currentGuessingTeam === Teams.RED) {
@@ -182,15 +177,20 @@ function Board() {
     }
     postJSON({ 
         revealedCards: revealedCards,
-        currentGuessingTeam: currentGuessingTeam
+        currentGuessingTeam: currentGuessingTeam,
+        clue: clue
     })
-  }, [revealedCards, currentGuessingTeam] )
+  }, [revealedCards, currentGuessingTeam, clue] )
 
   return (
     <div id='board'>
-      <h2>YOU ARE TEAM {getTeamName(playerTeam)}</h2>
-      <h2>IT IS {itIsYourTurn ? "YOUR TEAM'S" : "YOUR OPPONENT'S"} TURN</h2>
-      <h2>{`red: ${scores[Teams.RED]}, blue: ${scores[Teams.BLUE]}`}</h2>
+      <h2 style={{ color: `${getTeamName(playerTeam)}`}}>YOU ARE TEAM {getTeamName(playerTeam)}</h2>
+      {!isGameOver &&
+      <div>
+        <h2 style={{ color: `${getTeamName(currentGuessingTeam)}`}}>{`IT IS ${getTeamName(currentGuessingTeam)}'S TURN`}</h2>
+        <h2>{`red: ${scores[Teams.RED]}, blue: ${scores[Teams.BLUE]}`}</h2>
+      </div>
+      }
       {isGameOver &&
         <div>
           <h2>GAME OVER</h2>
