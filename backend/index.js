@@ -14,7 +14,7 @@ const requestLogger = (request, response, next) => {
     console.log('Body:  ', request.body)
     console.log('---')
     next()
-  }
+}
 
 app.use(requestLogger)
 
@@ -35,10 +35,25 @@ function shuffleArray(array) {
 }
 
 let boardState = {};
+const lobbies = new Map();
 
-function generateGameId() {
-    return Math.floor(Math.random() * 100000);
+const generateUniqueNumbers = (max) => {
+    const chosenNumbers = new Set();
+    return () => {
+      if (chosenNumbers.size === max) {
+        throw new Error('No more uniques!');
+      }
+      let num;
+      do {
+        num = Math.floor(Math.random() * max)
+      } while (chosenNumbers.has(num));
+      chosenNumbers.add(num);
+      return num;
+    };
 }
+
+const maxGames = 100000
+const generateUniqueGameId = generateUniqueNumbers(100000)
 
 function generateNewBoardState() {
     const newKey = [
@@ -56,8 +71,7 @@ function generateNewBoardState() {
         startingTeam: newStartingTeam,
         revealedCards: [],
         currentGuessingTeam: newStartingTeam,
-        clue: ['', 0],
-        gameId: generateGameId()
+        clue: ['', 0]
     }
     return newBoardState
 }
@@ -68,14 +82,29 @@ app.get('/', (request, response) => {
 
 // post to new game endpoint
 app.get('/newGame', (request, response) => {
-    boardState = generateNewBoardState();
-    response.json(boardState)
+    const newGameId = generateUniqueGameId()
+    const newBoardState = generateNewBoardState()
+    lobbies.set(newGameId, newBoardState)
+    response.json({ ...lobbies.get(newGameId), gameId: newGameId})
 })
 
 // get game state
 app.get('/boardState', (request, response) => {
     response.json(boardState)
 })
+
+// get game state for specific game ID
+app.get('/boardState/:id', (request, response) => {
+    const id = Number(request.params.id)
+    // const state = boardState.find(board => board.id === id)
+    const board = lobbies.get(id)
+    if (board) {
+        response.json(board)
+    } else {
+        response.status(404).end()
+    }
+})
+
 
 // post game state
 app.post('/boardState', (request, response) => {

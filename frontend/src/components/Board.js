@@ -30,17 +30,20 @@ function Board() {
 
   // networking stuff
   const waitTime = 5000
-  const dataUrl = 'http://localhost:8080/boardState'
+  const baseUrl = 'http://localhost:8080'
 
-  const fetchBoardState = () => {
-    fetch(dataUrl).then(response => response.json()).then(data => {
+  // const clearGamePolling = (intervalId)
+
+  const fetchBoardState = (gameId) => {
+    const gameUrl = baseUrl + '/boardState/' + gameId
+    fetch(gameUrl).then(response => response.json()).then(data => {
       console.log('fetching board state...', data)
       if(JSON.stringify(data.boardKey) !== JSON.stringify(key)) {
         setKey(data.boardKey)
       }
       if(data.gameId !== gameId) {
-        setGameId(data.gameId)
-      }      
+        // setGameId(data.gameId)
+      }
       if(JSON.stringify(data.revealedCards) !== JSON.stringify(revealedCards)) {
         setRevealedCards(data.revealedCards)
       }
@@ -57,13 +60,15 @@ function Board() {
   }
 
   const fetchNewGame = () => {
-    const newGameUrl = 'http://localhost:8080/newGame'
+    const newGameUrl = baseUrl + '/newGame'
     fetch(newGameUrl).then(response => response.json()).then(data => {
       setRevealedCards([])
       setStartingTeam(data.startingTeam)
       setCurrentGuessingTeam(data.currentGuessingTeam)
       setKey(data.boardKey)
       setWords(data.words)
+      setGameId(data.gameId)
+      setInterval(()=>fetchBoardState(data.gameId), waitTime);
     })
   }
 
@@ -135,7 +140,6 @@ function Board() {
 
   const startNewGame = () => {
     fetchNewGame()
-    // setWords(shuffleArray(wordList).slice(0,25))
     setIsGameOver(false)
   }
   
@@ -156,49 +160,48 @@ function Board() {
 
   const winner = Object.keys(scores).reduce((a,b) => scores[a] > scores[b] ? a : b );
 
-  const joinGame = () => {
-    fetchBoardState()
-    setInterval(fetchBoardState, waitTime);
+  const joinGame = (gameId) => {
+    setGameId(gameId)
+    fetchBoardState(gameId)
+    setInterval(()=>fetchBoardState(gameId), waitTime);
   }
 
   const hostGame = () => {
     startNewGame()
-    setInterval(fetchBoardState, waitTime);
   }
 
-  useEffect(() => {
-    async function postJSON(data) {
-      try {
-        const response = await fetch(dataUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
+  // useEffect(() => {
+  //   async function postJSON(data) {
+  //     try {
+  //       const response = await fetch(dataUrl, {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(data),
+  //       });
     
-        const result = await response.json();
-        console.log("Success:", result);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    }
-    if(currentGuessingTeam){
-      postJSON({ 
-          revealedCards: revealedCards,
-          currentGuessingTeam: currentGuessingTeam,
-          clue: clue
-      })
-    }
-  }, [revealedCards, currentGuessingTeam, clue] )
+  //       const result = await response.json();
+  //       console.log("Success:", result);
+  //     } catch (error) {
+  //       console.error("Error:", error);
+  //     }
+  //   }
+  //   if(currentGuessingTeam){
+  //     postJSON({ 
+  //         revealedCards: revealedCards,
+  //         currentGuessingTeam: currentGuessingTeam,
+  //         clue: clue
+  //     })
+  //   }
+  // }, [revealedCards, currentGuessingTeam, clue] )
 
   if (!gameId) {
     return (
       <div id='splash'>
         <input type="number" onChange={e => setGameIdInput(e.target.value)}></input>
-        <button onClick={joinGame}>Join</button>
+        <button onClick={()=>joinGame(gameIdInput)}>Join</button>
         <button onClick={hostGame}>Host Game</button>
-        <h2>{`Game ID: ${gameId}`}</h2>
         <h3>{`Team: ${TeamNames[playerTeam]}`}</h3>
         <button onClick={()=>setPlayerTeam(Teams.RED)}>Red Team</button>
         <button onClick={()=>setPlayerTeam(Teams.BLUE)}>Blue Team</button>
@@ -212,6 +215,7 @@ function Board() {
   return (
 
     <div id='board'>
+      <h2>{`Game ID: ${gameId}`}</h2>
       <h2 style={{ color: `${getTeamName(playerTeam)}`}}>YOU ARE TEAM {getTeamName(playerTeam)}</h2>
       {!isGameOver &&
       <div>
