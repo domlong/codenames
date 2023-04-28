@@ -5,15 +5,6 @@ import Clue from "./Clue";
 import '../styles/Grid.css'
 import { PlayerRoles, Teams, TeamNames } from "./consts";
 
-function shuffleArray(array) {
-  const shuffledArray = array.slice()
-  for (let i = shuffledArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
-  }
-  return shuffledArray;
-}
-
 function Board() {
   const [key, setKey] = useState([])
   const [revealedCards, setRevealedCards] = useState([])
@@ -187,6 +178,13 @@ function Board() {
     startNewGame()
   }
 
+  const sendClue = (newClue) => {
+    setClue(newClue)
+    patchBoardState({
+      clue: newClue
+    })
+  }
+
   // useEffect(() => {
   //   async function putBoardState(data) {
   //     const gameUrl = baseUrl + '/boardState/' + gameId
@@ -270,7 +268,7 @@ function Board() {
       />
       <Clue
         clue={clue}
-        setClue={setClue}
+        sendClue={sendClue}
         isVisible={
           playerRole === PlayerRoles.Spymaster
           && playerTeam === currentGuessingTeam

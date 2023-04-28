@@ -1,0 +1,6 @@
+PATCH http://localhost:8080/boardState/67742 HTTP/1.1
+content-type: application/json
+
+{
+  "clue": [ "scooby-doo", 2 ]
+}

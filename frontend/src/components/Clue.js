@@ -3,7 +3,7 @@ import { useState } from "react";
 
 function Clue({
   clue,
-  setClue,
+  sendClue,
   isVisible
 }) {
 
@@ -15,7 +15,7 @@ function Clue({
 
   const buttons = nums.map((num, index) => {
     return (
-      <button key={index} onClick={()=>setClue([clueText, num])}>{num}</button>
+      <button key={index} onClick={()=>sendClue([clueText, num])}>{num}</button>
     )
   })
     
