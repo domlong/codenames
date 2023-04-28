@@ -10,6 +10,13 @@ const Teams = {
     BLACK: 3
 };
 
+const TeamNames = {
+    [Teams.NEUTRAL]: 'NEUTRAL',
+    [Teams.RED]: 'RED',
+    [Teams.BLUE]: 'BLUE',
+    [Teams.BLACK]: 'BLACK',
+};
+
 const TeamStyleTags = {
     0: 'neutral',
     1: 'teamA',
@@ -17,4 +24,4 @@ const TeamStyleTags = {
     3: 'assassin'
 }
 
-export { PlayerRoles, Teams, TeamStyleTags };
+export { PlayerRoles, Teams, TeamNames, TeamStyleTags };
