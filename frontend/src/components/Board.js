@@ -15,7 +15,6 @@ function shuffleArray(array) {
 }
 
 function Board() {
-  // replace a bunch of these with generic board state to pass between server?
   const [key, setKey] = useState([])
   const [revealedCards, setRevealedCards] = useState([])
   const [playerRole, setPlayerRole] = useState(PlayerRoles.Operative)
@@ -40,9 +39,6 @@ function Board() {
       console.log('fetching board state...', data)
       if(JSON.stringify(data.boardKey) !== JSON.stringify(key)) {
         setKey(data.boardKey)
-      }
-      if(data.gameId !== gameId) {
-        // setGameId(data.gameId)
       }
       if(JSON.stringify(data.revealedCards) !== JSON.stringify(revealedCards)) {
         setRevealedCards(data.revealedCards)
@@ -72,25 +68,24 @@ function Board() {
     })
   }
 
-  async function putBoardState(board) {
+  async function patchBoardState(board) {
       const gameUrl = baseUrl + '/boardState/' + gameId
       try {
         const response = await fetch(gameUrl, {
-          method: "PUT",
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(board),
         });
-        
+
         const result = await response.text();
         console.log("Success:", result);
       } catch (error) {
-        console.error("Error me jerror:", error);
+        console.error("Error:", error);
       }
   }
 
-  // useEffect(() => fetchNewGame, [])
   // useEffect(() => {
   //   const intervalId = setInterval(fetchBoardState, waitTime);
   //     return () => clearInterval(intervalId)
@@ -108,36 +103,21 @@ function Board() {
 
   const selectCard = (cardId) => {
     if(itIsYourTurn && playerRole===PlayerRoles.Operative) {
-      revealCard(cardId)
-      // if((currentGuessingTeam !== key[cardId]) ) {
-      //   togglePlayerTeamTurn()
-      // }
-    }
-  }
-
-  if(!revealedCards) {
-    if((currentGuessingTeam !== key[revealedCards.slice(-1)]) ) {
-      togglePlayerTeamTurn()
+      if (!revealedCards.includes(cardId)) {
+        setRevealedCards([...revealedCards, cardId])
+        patchBoardState({
+          revealedCards: [...revealedCards, cardId]
+        })
+      }
+      if((currentGuessingTeam !== key[cardId]) ) {
+        togglePlayerTeamTurn()
+      }
     }
   }
   
 
   const handleFinishTurn = () => {
     togglePlayerTeamTurn()
-  }
-
-  const revealCard = (cardId) => {
-    if (!revealedCards.includes(cardId)) {
-      setRevealedCards([...revealedCards, cardId])
-      putBoardState({
-        boardKey: key,
-        words: words,
-        startingTeam: startingTeam,
-        revealedCards: [...revealedCards, cardId],
-        currentGuessingTeam: currentGuessingTeam,
-        clue: clue
-    })
-    }
   }
 
   const scores = useMemo(() => {
@@ -156,9 +136,15 @@ function Board() {
   const togglePlayerTeamTurn = () => {
     if(currentGuessingTeam === Teams.RED) {
       setCurrentGuessingTeam(Teams.BLUE)
+      patchBoardState({
+        currentGuessingTeam: Teams.BLUE
+      })
     }
     else {
       setCurrentGuessingTeam(Teams.RED)
+      patchBoardState({
+        currentGuessingTeam: Teams.RED
+      })
     }
     setClue(['', 0])
   }
@@ -180,8 +166,6 @@ function Board() {
     setIsGameOver(true)
     // reveal all cards to everyone?
   }
-
-  // useEffect(() => startNewGame(), [])
 
   if (checkWinCondition() && !isGameOver) {
     gameOver()

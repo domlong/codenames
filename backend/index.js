@@ -35,7 +35,7 @@ function shuffleArray(array) {
 }
 
 let boardState = {};
-const lobbies = new Map();
+const lobbies = [];
 
 const generateUniqueNumbers = (max) => {
     const chosenNumbers = new Set();
@@ -66,6 +66,7 @@ function generateNewBoardState() {
     newKey.push(newStartingTeam)
 
     const newBoardState = {
+        gameId: generateUniqueGameId(),
         boardKey: shuffleArray(newKey),
         words: shuffleArray(wordList).slice(0,25),
         startingTeam: newStartingTeam,
@@ -83,10 +84,9 @@ app.get('/', (request, response) => {
 // post to new game endpoint
 // CHANGE THIS TO A POST CALL
 app.get('/newGame', (request, response) => {
-    const newGameId = generateUniqueGameId()
     const newBoardState = generateNewBoardState()
-    lobbies.set(newGameId, newBoardState)
-    response.json({ ...lobbies.get(newGameId), gameId: newGameId})
+    lobbies.push(newBoardState)
+    response.json(lobbies.at(-1))
 })
 
 // get game state
@@ -97,8 +97,7 @@ app.get('/boardState', (request, response) => {
 // get game state for specific game ID
 app.get('/boardState/:id', (request, response) => {
     const id = Number(request.params.id)
-    // const state = boardState.find(board => board.id === id)
-    const board = lobbies.get(id)
+    const board = lobbies.find(board => board.gameId === id)
     if (board) {
         response.json(board)
     } else {
@@ -106,30 +105,21 @@ app.get('/boardState/:id', (request, response) => {
     }
 })
 
-
-app.put('/boardState/:id', (request, response) => {
+app.patch('/boardState/:id', (request, response) => {
     const id = Number(request.params.id)
     // const state = boardState.find(board => board.id === id)
-    const updatedBoard = request.body
-    if (updatedBoard) {
-        lobbies.set(id, updatedBoard)
+    // const updatedBoard = Object.keys(request.body)
+    const [attribute, value] = Object.entries(request.body)[0]
+    const boardIndex = lobbies.findIndex(board => board.gameId === id)
+    if (attribute) {
+        lobbies[boardIndex][attribute] = value;
         response.send(`Board #${id} updated`)
     } else {
         response.status(404).end()
     }
 })
 
-// post game state
-app.post('/boardState', (request, response) => {
-    boardState.revealedCards = request.body.revealedCards
-    boardState.currentGuessingTeam = request.body.currentGuessingTeam
-    boardState.clue = request.body.clue
-    response.json('Nice going')
-})
-
 const PORT = 8080
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
-
-// add role + team + gameID splash screen at start of front-end app
