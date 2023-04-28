@@ -72,6 +72,24 @@ function Board() {
     })
   }
 
+  async function putBoardState(board) {
+      const gameUrl = baseUrl + '/boardState/' + gameId
+      try {
+        const response = await fetch(gameUrl, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(board),
+        });
+        
+        const result = await response.text();
+        console.log("Success:", result);
+      } catch (error) {
+        console.error("Error me jerror:", error);
+      }
+  }
+
   // useEffect(() => fetchNewGame, [])
   // useEffect(() => {
   //   const intervalId = setInterval(fetchBoardState, waitTime);
@@ -91,11 +109,18 @@ function Board() {
   const selectCard = (cardId) => {
     if(itIsYourTurn && playerRole===PlayerRoles.Operative) {
       revealCard(cardId)
-      if((currentGuessingTeam !== key[cardId]) ) {
-        togglePlayerTeamTurn()
-      }
+      // if((currentGuessingTeam !== key[cardId]) ) {
+      //   togglePlayerTeamTurn()
+      // }
     }
   }
+
+  if(!revealedCards) {
+    if((currentGuessingTeam !== key[revealedCards.slice(-1)]) ) {
+      togglePlayerTeamTurn()
+    }
+  }
+  
 
   const handleFinishTurn = () => {
     togglePlayerTeamTurn()
@@ -104,6 +129,14 @@ function Board() {
   const revealCard = (cardId) => {
     if (!revealedCards.includes(cardId)) {
       setRevealedCards([...revealedCards, cardId])
+      putBoardState({
+        boardKey: key,
+        words: words,
+        startingTeam: startingTeam,
+        revealedCards: [...revealedCards, cardId],
+        currentGuessingTeam: currentGuessingTeam,
+        clue: clue
+    })
     }
   }
 
@@ -171,10 +204,11 @@ function Board() {
   }
 
   // useEffect(() => {
-  //   async function postJSON(data) {
+  //   async function putBoardState(data) {
+  //     const gameUrl = baseUrl + '/boardState/' + gameId
   //     try {
-  //       const response = await fetch(dataUrl, {
-  //         method: "POST",
+  //       const response = await fetch(gameUrl, {
+  //         method: "PUT",
   //         headers: {
   //           "Content-Type": "application/json",
   //         },
@@ -184,15 +218,18 @@ function Board() {
   //       const result = await response.json();
   //       console.log("Success:", result);
   //     } catch (error) {
-  //       console.error("Error:", error);
+  //       console.error("Error me jerror:", error);
   //     }
   //   }
   //   if(currentGuessingTeam){
-  //     postJSON({ 
-  //         revealedCards: revealedCards,
-  //         currentGuessingTeam: currentGuessingTeam,
-  //         clue: clue
-  //     })
+  //     putBoardState({
+  //       boardKey: key,
+  //       words: words,
+  //       startingTeam: startingTeam,
+  //       revealedCards: revealedCards,
+  //       currentGuessingTeam: currentGuessingTeam,
+  //       clue: clue
+  //   })
   //   }
   // }, [revealedCards, currentGuessingTeam, clue] )
 

@@ -81,6 +81,7 @@ app.get('/', (request, response) => {
 })
 
 // post to new game endpoint
+// CHANGE THIS TO A POST CALL
 app.get('/newGame', (request, response) => {
     const newGameId = generateUniqueGameId()
     const newBoardState = generateNewBoardState()
@@ -105,6 +106,18 @@ app.get('/boardState/:id', (request, response) => {
     }
 })
 
+
+app.put('/boardState/:id', (request, response) => {
+    const id = Number(request.params.id)
+    // const state = boardState.find(board => board.id === id)
+    const updatedBoard = request.body
+    if (updatedBoard) {
+        lobbies.set(id, updatedBoard)
+        response.send(`Board #${id} updated`)
+    } else {
+        response.status(404).end()
+    }
+})
 
 // post game state
 app.post('/boardState', (request, response) => {
