@@ -34,13 +34,10 @@ function Board() {
       if(JSON.stringify(data.revealedCards) !== JSON.stringify(revealedCards)) {
         setRevealedCards(data.revealedCards)
       }
-      
       if(data.currentGuessingTeam !== currentGuessingTeam) {
         setCurrentGuessingTeam(data.currentGuessingTeam)
       }
-      if(JSON.stringify(data.clue) !== JSON.stringify(clue)) {
-        setClue(data.clue)
-      }
+      setClue(data.clue)
       setWords(data.words)
       setStartingTeam(data.startingTeam)
     })
@@ -99,9 +96,9 @@ function Board() {
         patchBoardState({
           revealedCards: [...revealedCards, cardId]
         })
-      }
-      if((currentGuessingTeam !== key[cardId]) ) {
-        togglePlayerTeamTurn()
+        if((currentGuessingTeam !== key[cardId]) ) {
+          togglePlayerTeamTurn()
+        }
       }
     }
   }
@@ -128,16 +125,22 @@ function Board() {
     if(currentGuessingTeam === Teams.RED) {
       setCurrentGuessingTeam(Teams.BLUE)
       patchBoardState({
-        currentGuessingTeam: Teams.BLUE
+        currentGuessingTeam: Teams.BLUE,
+        clue: ['', 0]
       })
     }
     else {
       setCurrentGuessingTeam(Teams.RED)
       patchBoardState({
-        currentGuessingTeam: Teams.RED
+        currentGuessingTeam: Teams.RED,
+        clue: ['', 0]
       })
     }
     setClue(['', 0])
+    // combine this with the above patch, need to change the API
+    // patchBoardState({
+    //   clue: ['', 0]
+    // })
   }
 
   function checkWinCondition() {
@@ -184,6 +187,9 @@ function Board() {
       clue: newClue
     })
   }
+
+  const isClueGiver = playerRole === PlayerRoles.Spymaster
+                        && playerTeam === currentGuessingTeam
 
   // useEffect(() => {
   //   async function putBoardState(data) {
@@ -257,6 +263,11 @@ function Board() {
       </select>
       <button onClick={handleFinishTurn}>Finish Turn</button>
       <button onClick={startNewGame}>New Game</button>
+      <Clue
+        clue={clue}
+        sendClue={sendClue}
+        isVisible={isClueGiver}
+      />
       <Grid
         words={words}
         boardKey={key}
@@ -266,15 +277,6 @@ function Board() {
         revealedCards={revealedCards}
         isGameOver={isGameOver}
       />
-      <Clue
-        clue={clue}
-        sendClue={sendClue}
-        isVisible={
-          playerRole === PlayerRoles.Spymaster
-          && playerTeam === currentGuessingTeam
-        }
-      />
-
     </div>
   );
 }

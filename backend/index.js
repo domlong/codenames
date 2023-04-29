@@ -107,16 +107,24 @@ app.get('/boardState/:id', (request, response) => {
 
 app.patch('/boardState/:id', (request, response) => {
     const id = Number(request.params.id)
-    // const state = boardState.find(board => board.id === id)
-    // const updatedBoard = Object.keys(request.body)
-    const [attribute, value] = Object.entries(request.body)[0]
     const boardIndex = lobbies.findIndex(board => board.gameId === id)
-    if (attribute) {
-        lobbies[boardIndex][attribute] = value;
-        response.send(`Board #${id} updated`)
-    } else {
-        response.status(404).end()
-    }
+    // const [attribute, value] = Object.entries(request.body)[0]
+    const entries = Object.entries(request.body)
+    entries.forEach(entry => {
+        const [attribute, value] = entry
+        if (!attribute) {
+            response.status(404).end()
+        } else {
+            lobbies[boardIndex][attribute] = value;
+        }
+    })
+    response.send(`Board #${id} updated`)
+    // if (attribute) {
+    //     lobbies[boardIndex][attribute] = value;
+    //     response.send(`Board #${id} updated`)
+    // } else {
+    //     response.status(404).end()
+    // }
 })
 
 const PORT = 8080

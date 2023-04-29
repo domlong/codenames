@@ -18,16 +18,16 @@ function Clue({
       <button key={index} onClick={()=>sendClue([clueText, num])}>{num}</button>
     )
   })
-    
+
   return (
     <div className={`clue`}>
+      <h2>{ waitingForClue ? 'Waiting for clue...' : `Clue: ${clue[0]}, ${clue[1]}`}</h2>
       { isVisible &&
         <div>
           <input onChange={e => setClueText(e.target.value)}/>
           {buttons}
           </div>
       }
-      <h2>{ waitingForClue ? 'Waiting for clue...' : `Clue: ${clue[0]}, ${clue[1]}`}</h2>
     </div>
   );
 }
