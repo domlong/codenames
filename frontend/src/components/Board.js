@@ -191,36 +191,6 @@ function Board() {
   const isClueGiver = playerRole === PlayerRoles.Spymaster
                         && playerTeam === currentGuessingTeam
 
-  // useEffect(() => {
-  //   async function putBoardState(data) {
-  //     const gameUrl = baseUrl + '/boardState/' + gameId
-  //     try {
-  //       const response = await fetch(gameUrl, {
-  //         method: "PUT",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(data),
-  //       });
-    
-  //       const result = await response.json();
-  //       console.log("Success:", result);
-  //     } catch (error) {
-  //       console.error("Error me jerror:", error);
-  //     }
-  //   }
-  //   if(currentGuessingTeam){
-  //     putBoardState({
-  //       boardKey: key,
-  //       words: words,
-  //       startingTeam: startingTeam,
-  //       revealedCards: revealedCards,
-  //       currentGuessingTeam: currentGuessingTeam,
-  //       clue: clue
-  //   })
-  //   }
-  // }, [revealedCards, currentGuessingTeam, clue] )
-
   if (!gameId) {
     return (
       <div id='splash'>
@@ -240,7 +210,10 @@ function Board() {
   return (
 
     <div id='board'>
-      <h2>{`Game ID: ${gameId}`}</h2>
+      <div id='gameId'>
+        <h2 style={{ display: 'inline' }}>{`Game ID: ${gameId}`}</h2>
+        <button onClick={() => {navigator.clipboard.writeText(gameId)}}>Copy Game ID</button>
+      </div>
       <h2 style={{ color: `${getTeamName(playerTeam)}`}}>YOU ARE TEAM {getTeamName(playerTeam)}</h2>
       {!isGameOver &&
       <div>
@@ -261,7 +234,7 @@ function Board() {
         <option value={Teams.RED}>Red</option>
         <option value={Teams.BLUE}>Blue</option>
       </select>
-      <button onClick={handleFinishTurn}>Finish Turn</button>
+      <button onClick={handleFinishTurn} disabled={isGameOver}>Finish Turn</button>
       <button onClick={startNewGame}>New Game</button>
       <Clue
         clue={clue}
