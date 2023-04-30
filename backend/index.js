@@ -72,7 +72,7 @@ function generateNewBoardState() {
         startingTeam: newStartingTeam,
         revealedCards: [],
         currentGuessingTeam: newStartingTeam,
-        clue: ['', 0]
+        clue: { text: '', guesses: 0}
     }
     return newBoardState
 }

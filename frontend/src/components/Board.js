@@ -12,7 +12,7 @@ function Board() {
   const [playerTeam, setPlayerTeam] = useState(Teams.RED)
   const [startingTeam, setStartingTeam] = useState()
   const [currentGuessingTeam, setCurrentGuessingTeam] = useState(null)
-  const [clue, setClue] = useState(['', 0])
+  const [clue, setClue] = useState({ text: '', guesses: 0})
   const [words, setWords] = useState([])
   const [gameIdInput, setGameIdInput] = useState(0)
   const [gameId, setGameId] = useState(null)
@@ -99,7 +99,7 @@ function Board() {
   const itIsYourTurn = playerTeam === currentGuessingTeam;
 
   const selectCard = (cardId) => {
-    // disabled for testing
+    // disabled mandatory clue while testing
     // if(itIsYourTurn && playerRole===PlayerRoles.Operative && !waitingForClue) {
       if(itIsYourTurn && playerRole===PlayerRoles.Operative) {
         if (!revealedCards.includes(cardId)) {
@@ -136,17 +136,17 @@ function Board() {
       setCurrentGuessingTeam(Teams.BLUE)
       patchBoardState({
         currentGuessingTeam: Teams.BLUE,
-        clue: ['', 0]
+        clue: { text: '', guesses: 0}
       }, gameId)
     }
     else {
       setCurrentGuessingTeam(Teams.RED)
       patchBoardState({
         currentGuessingTeam: Teams.RED,
-        clue: ['', 0]
+        clue: { text: '', guesses: 0}
       }, gameId)
     }
-    setClue(['', 0])
+    setClue({ text: '', guesses: 0})
   }
 
   function checkWinCondition() {
@@ -190,7 +190,7 @@ function Board() {
     }, gameId)
   }
 
-  const waitingForClue = (clue[0].length === 0)
+  const waitingForClue = clue.text.length === 0
 
   const isClueGiver = playerRole === PlayerRoles.Spymaster
                         && playerTeam === currentGuessingTeam

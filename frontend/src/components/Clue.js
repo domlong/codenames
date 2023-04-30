@@ -15,7 +15,7 @@ function Clue({
 
   const buttons = nums.map((num, index) => {
     return (
-      <button key={index} onClick={()=>sendClue([clueText, num])}>{num}</button>
+      <button key={index} onClick={()=>sendClue({ text: clueText, guesses: num})}>{num}</button>
     )
   })
 
@@ -27,7 +27,7 @@ function Clue({
       return 'Waiting for clue...'
     }
     else {
-      return `Clue: ${clue[0]}, ${clue[1]}`
+      return `Clue: ${clue.text}, ${clue.guesses}`
     }
   }
 
