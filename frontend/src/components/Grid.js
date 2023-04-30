@@ -21,7 +21,7 @@ function Grid({
         playerRole={playerRole}
         revealCard={revealCard}
         isRevealed={revealedCards.includes(index)}
-        isDisabled={isGameOver}
+        gameOver={isGameOver}
         id={index}
       />
     )

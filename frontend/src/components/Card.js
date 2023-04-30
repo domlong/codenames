@@ -2,14 +2,17 @@ import '../styles/Card.css'
 import { PlayerRoles, Teams, TeamStyleTags } from './consts';
 
 function Card({
+    id,
     word,
     category,
     playerRole,
     revealCard,
     isRevealed,
-    isDisabled,
-    id
+    gameOver,
+
 }) {
+
+    // Make button to let Operatives see the entire board if game is over
 
     function determineCardColour(isRevealed, category, playerRole) {
         if ( isRevealed ) {
@@ -27,7 +30,7 @@ function Card({
         <button
             className={`card ${cardColour} ${isRevealed ? 'revealed' : ''} `}
             onClick={()=>revealCard(id)}
-            disabled={isDisabled}
+            disabled={gameOver}
         >
             <p>{word}</p>
         </button>

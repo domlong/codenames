@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 // import wordList from "../words";
 import Grid from "./Grid";
 import Clue from "./Clue";
@@ -14,9 +14,10 @@ function Board() {
   const [currentGuessingTeam, setCurrentGuessingTeam] = useState()
   const [clue, setClue] = useState(['', 0])
   const [words, setWords] = useState([])
-  const [isGameOver, setIsGameOver] = useState(false)
   const [gameIdInput, setGameIdInput] = useState(0)
-  const [gameId, setGameId] = useState(0)
+  const [gameId, setGameId] = useState(null)
+  const timerId = useRef(null)
+  const previousGameId = useRef(null)
 
   // networking stuff
   const waitTime = 5000
@@ -27,7 +28,7 @@ function Board() {
   const fetchBoardState = (gameId) => {
     const gameUrl = baseUrl + '/boardState/' + gameId
     fetch(gameUrl).then(response => response.json()).then(data => {
-      console.log('fetching board state...', data)
+      console.log('fetching board state for game ID', gameId, '...')
       if(JSON.stringify(data.boardKey) !== JSON.stringify(key)) {
         setKey(data.boardKey)
       }
@@ -40,6 +41,9 @@ function Board() {
       setClue(data.clue)
       setWords(data.words)
       setStartingTeam(data.startingTeam)
+      if(data.nextGameId){
+        joinGame(data.nextGameId)
+      }
     })
   }
 
@@ -52,11 +56,16 @@ function Board() {
       setKey(data.boardKey)
       setWords(data.words)
       setGameId(data.gameId)
-      setInterval(()=>fetchBoardState(data.gameId), waitTime);
+      timerId.current = setInterval(()=>fetchBoardState(data.gameId), waitTime);
+      if(previousGameId.current) {
+        patchBoardState({
+          nextGameId: data.gameId
+        }, previousGameId.current)
+      }
     })
   }
 
-  async function patchBoardState(board) {
+  async function patchBoardState(board, gameId) {
       const gameUrl = baseUrl + '/boardState/' + gameId
       try {
         const response = await fetch(gameUrl, {
@@ -90,12 +99,12 @@ function Board() {
   const itIsYourTurn = playerTeam === currentGuessingTeam;
 
   const selectCard = (cardId) => {
-    if(itIsYourTurn && playerRole===PlayerRoles.Operative) {
+    if(itIsYourTurn && playerRole===PlayerRoles.Operative && !waitingForClue) {
       if (!revealedCards.includes(cardId)) {
         setRevealedCards([...revealedCards, cardId])
         patchBoardState({
           revealedCards: [...revealedCards, cardId]
-        })
+        }, gameId)
         if((currentGuessingTeam !== key[cardId]) ) {
           togglePlayerTeamTurn()
         }
@@ -103,7 +112,6 @@ function Board() {
     }
   }
   
-
   const handleFinishTurn = () => {
     togglePlayerTeamTurn()
   }
@@ -127,20 +135,16 @@ function Board() {
       patchBoardState({
         currentGuessingTeam: Teams.BLUE,
         clue: ['', 0]
-      })
+      }, gameId)
     }
     else {
       setCurrentGuessingTeam(Teams.RED)
       patchBoardState({
         currentGuessingTeam: Teams.RED,
         clue: ['', 0]
-      })
+      }, gameId)
     }
     setClue(['', 0])
-    // combine this with the above patch, need to change the API
-    // patchBoardState({
-    //   clue: ['', 0]
-    // })
   }
 
   function checkWinCondition() {
@@ -152,18 +156,13 @@ function Board() {
   }
 
   const startNewGame = () => {
+    clearInterval(timerId.current)
+    previousGameId.current = gameId
     fetchNewGame()
-    setIsGameOver(false)
-  }
-  
-  const gameOver = () => {
-    setIsGameOver(true)
-    // reveal all cards to everyone?
   }
 
-  if (checkWinCondition() && !isGameOver) {
-    gameOver()
-  }
+
+  const isGameOver = checkWinCondition()
 
   function getTeamName(teamNum) {
     return Object.keys(Teams).find(key => Teams[key] === parseInt(teamNum))
@@ -174,7 +173,8 @@ function Board() {
   const joinGame = (gameId) => {
     setGameId(gameId)
     fetchBoardState(gameId)
-    setInterval(()=>fetchBoardState(gameId), waitTime);
+    clearInterval(timerId.current)
+    timerId.current = setInterval(()=>fetchBoardState(gameId), waitTime);
   }
 
   const hostGame = () => {
@@ -185,8 +185,10 @@ function Board() {
     setClue(newClue)
     patchBoardState({
       clue: newClue
-    })
+    }, gameId)
   }
+
+  const waitingForClue = (clue[0].length === 0)
 
   const isClueGiver = playerRole === PlayerRoles.Spymaster
                         && playerTeam === currentGuessingTeam
@@ -240,6 +242,8 @@ function Board() {
         clue={clue}
         sendClue={sendClue}
         isVisible={isClueGiver}
+        waitingForClue={waitingForClue}
+        gameOver={isGameOver}
       />
       <Grid
         words={words}

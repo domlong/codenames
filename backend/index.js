@@ -108,7 +108,6 @@ app.get('/boardState/:id', (request, response) => {
 app.patch('/boardState/:id', (request, response) => {
     const id = Number(request.params.id)
     const boardIndex = lobbies.findIndex(board => board.gameId === id)
-    // const [attribute, value] = Object.entries(request.body)[0]
     const entries = Object.entries(request.body)
     entries.forEach(entry => {
         const [attribute, value] = entry
@@ -119,12 +118,6 @@ app.patch('/boardState/:id', (request, response) => {
         }
     })
     response.send(`Board #${id} updated`)
-    // if (attribute) {
-    //     lobbies[boardIndex][attribute] = value;
-    //     response.send(`Board #${id} updated`)
-    // } else {
-    //     response.status(404).end()
-    // }
 })
 
 const PORT = 8080
