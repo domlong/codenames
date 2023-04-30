@@ -11,7 +11,7 @@ function Board() {
   const [playerRole, setPlayerRole] = useState(PlayerRoles.Operative)
   const [playerTeam, setPlayerTeam] = useState(Teams.RED)
   const [startingTeam, setStartingTeam] = useState()
-  const [currentGuessingTeam, setCurrentGuessingTeam] = useState()
+  const [currentGuessingTeam, setCurrentGuessingTeam] = useState(null)
   const [clue, setClue] = useState(['', 0])
   const [words, setWords] = useState([])
   const [gameIdInput, setGameIdInput] = useState(0)
@@ -28,16 +28,16 @@ function Board() {
   const fetchBoardState = (gameId) => {
     const gameUrl = baseUrl + '/boardState/' + gameId
     fetch(gameUrl).then(response => response.json()).then(data => {
-      console.log('fetching board state for game ID', gameId, '...')
-      if(JSON.stringify(data.boardKey) !== JSON.stringify(key)) {
-        setKey(data.boardKey)
-      }
-      if(JSON.stringify(data.revealedCards) !== JSON.stringify(revealedCards)) {
-        setRevealedCards(data.revealedCards)
-      }
-      if(data.currentGuessingTeam !== currentGuessingTeam) {
-        setCurrentGuessingTeam(data.currentGuessingTeam)
-      }
+      setKey(data.boardKey)
+
+      // ok this doesn't work natty cause setInterval is funky in React
+      // closure means this function is always going off the initial useState values
+      // see Dan Abramov's post
+      // if(JSON.stringify(data.revealedCards) !== JSON.stringify(revealedCards)) {
+      //   setRevealedCards(data.revealedCards)
+      // }
+      setRevealedCards(data.revealedCards)
+      setCurrentGuessingTeam(data.currentGuessingTeam)
       setClue(data.clue)
       setWords(data.words)
       setStartingTeam(data.startingTeam)
@@ -50,7 +50,7 @@ function Board() {
   const fetchNewGame = () => {
     const newGameUrl = baseUrl + '/newGame'
     fetch(newGameUrl).then(response => response.json()).then(data => {
-      setRevealedCards([])
+      setRevealedCards(data.revealedCards)
       setStartingTeam(data.startingTeam)
       setCurrentGuessingTeam(data.currentGuessingTeam)
       setKey(data.boardKey)
@@ -99,16 +99,18 @@ function Board() {
   const itIsYourTurn = playerTeam === currentGuessingTeam;
 
   const selectCard = (cardId) => {
-    if(itIsYourTurn && playerRole===PlayerRoles.Operative && !waitingForClue) {
-      if (!revealedCards.includes(cardId)) {
-        setRevealedCards([...revealedCards, cardId])
-        patchBoardState({
-          revealedCards: [...revealedCards, cardId]
-        }, gameId)
-        if((currentGuessingTeam !== key[cardId]) ) {
-          togglePlayerTeamTurn()
+    // disabled for testing
+    // if(itIsYourTurn && playerRole===PlayerRoles.Operative && !waitingForClue) {
+      if(itIsYourTurn && playerRole===PlayerRoles.Operative) {
+        if (!revealedCards.includes(cardId)) {
+          setRevealedCards([...revealedCards, cardId])
+          patchBoardState({
+            revealedCards: [...revealedCards, cardId]
+          }, gameId)
+          if((currentGuessingTeam !== key[cardId]) ) {
+            togglePlayerTeamTurn()
+          }
         }
-      }
     }
   }
   
@@ -226,7 +228,7 @@ function Board() {
       {isGameOver &&
         <div>
           <h2>GAME OVER</h2>
-          <h2>{`${getTeamName(winner)} WINS!!`}</h2>
+          <h2 style={{ color: `${getTeamName(winner)}`}}>{`${getTeamName(winner)} WINS!!`}</h2>
         </div>
       }
       <select value={playerRole} onChange={togglePlayerRole} >
