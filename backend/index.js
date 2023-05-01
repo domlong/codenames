@@ -17,6 +17,7 @@ const requestLogger = (request, response, next) => {
 }
 
 app.use(requestLogger)
+// app.use(express.static('build'))
 
 const Teams = {
     NEUTRAL: 0,
@@ -89,13 +90,8 @@ app.get('/newGame', (request, response) => {
     response.json(lobbies.at(-1))
 })
 
-// get game state
-app.get('/boardState', (request, response) => {
-    response.json(boardState)
-})
-
 // get game state for specific game ID
-app.get('/boardState/:id', (request, response) => {
+app.get('/boards/:id', (request, response) => {
     const id = Number(request.params.id)
     const board = lobbies.find(board => board.gameId === id)
     if (board) {
@@ -105,7 +101,7 @@ app.get('/boardState/:id', (request, response) => {
     }
 })
 
-app.patch('/boardState/:id', (request, response) => {
+app.patch('/boards/:id', (request, response) => {
     const id = Number(request.params.id)
     const boardIndex = lobbies.findIndex(board => board.gameId === id)
     const entries = Object.entries(request.body)
@@ -120,7 +116,7 @@ app.patch('/boardState/:id', (request, response) => {
     response.send(`Board #${id} updated`)
 })
 
-const PORT = 8080
+const PORT = process.env.PORT || 8080
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })

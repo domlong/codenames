@@ -21,12 +21,13 @@ function Board() {
 
   // networking stuff
   const waitTime = 5000
-  const baseUrl = 'http://localhost:8080'
+  // const baseUrl = 'http://localhost:8080'
+  const baseUrl = process.env.baseUrl || ''
 
   // const clearGamePolling = (intervalId)
 
   const fetchBoardState = (gameId) => {
-    const gameUrl = baseUrl + '/boardState/' + gameId
+    const gameUrl = baseUrl + '/boards/' + gameId
     fetch(gameUrl).then(response => response.json()).then(data => {
       setKey(data.boardKey)
 
@@ -66,7 +67,7 @@ function Board() {
   }
 
   async function patchBoardState(board, gameId) {
-      const gameUrl = baseUrl + '/boardState/' + gameId
+      const gameUrl = baseUrl + '/boards/' + gameId
       try {
         const response = await fetch(gameUrl, {
           method: "PATCH",

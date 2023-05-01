@@ -1,1 +1,1 @@
-GET http://localhost:8080/boardState/4234
+GET http://localhost:8080/boards/123456
