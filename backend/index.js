@@ -17,7 +17,7 @@ const requestLogger = (request, response, next) => {
 }
 
 app.use(requestLogger)
-// app.use(express.static('build'))
+app.use(express.static('build'))
 
 const Teams = {
     NEUTRAL: 0,
@@ -78,8 +78,8 @@ function generateNewBoardState() {
     return newBoardState
 }
 
-app.get('/', (request, response) => {
-    response.send(`<h1>pog it's codenames</h1>`)
+app.get('/boards', (request, response) => {
+    response.json(lobbies)
 })
 
 // post to new game endpoint
