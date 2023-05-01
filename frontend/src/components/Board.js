@@ -22,7 +22,8 @@ function Board() {
   // networking stuff
   const waitTime = 5000
   // const baseUrl = 'http://localhost:8080'
-  const baseUrl = process.env.baseUrl || ''
+  // const baseUrl = process.env.baseUrl || 'http://localhost:8080'
+  const baseUrl = 'https://codenames-1jf1.onrender.com:3001'
 
   // const clearGamePolling = (intervalId)
 

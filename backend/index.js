@@ -87,7 +87,10 @@ app.get('/', (request, response) => {
 app.get('/newGame', (request, response) => {
     const newBoardState = generateNewBoardState()
     lobbies.push(newBoardState)
-    response.json(lobbies.at(-1))
+    
+    // doesn't work on old JS versions
+    // response.json(lobbies.at(-1))
+    response.json(lobbies[lobbies.length-1])
 })
 
 // get game state for specific game ID
