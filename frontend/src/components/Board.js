@@ -20,10 +20,9 @@ function Board() {
   const previousGameId = useRef(null)
 
   // networking stuff
-  const waitTime = 5000
+  const waitTime = 3000
   // const baseUrl = 'http://localhost:8080'
-  const baseUrl = ''
-  // const baseUrl = 'https://codenames-1jf1.onrender.com:3001'
+  const baseUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8080'
 
   // const clearGamePolling = (intervalId)
 
@@ -33,8 +32,8 @@ function Board() {
       setKey(data.boardKey)
 
       // ok this doesn't work natty cause setInterval is funky in React
-      // closure means this function is always going off the initial useState values
       // see Dan Abramov's post
+      // 
       // if(JSON.stringify(data.revealedCards) !== JSON.stringify(revealedCards)) {
       //   setRevealedCards(data.revealedCards)
       // }

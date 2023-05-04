@@ -6,9 +6,9 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf build && cd ../frontend && npm run build && cp -r build ../backend",
-    "deploy:full": "npm run build:ui && g"
+    "test": "jest --verbose",
+    "lint": "eslint ."
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +17,10 @@
     "express": "^4.18.2"
   },
   "devDependencies": {
+    "eslint": "^8.39.0",
     "nodemon": "^2.0.22"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }

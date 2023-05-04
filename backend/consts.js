@@ -17,4 +17,8 @@ const TeamStyleTags = {
     3: 'assassin'
 }
 
-export { PlayerRoles, Teams, TeamStyleTags };
+module.exports =  {
+    PlayerRoles,
+    Teams,
+    TeamStyleTags
+};

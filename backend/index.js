@@ -3,8 +3,9 @@ const cors = require('cors')
 const wordList = require('./words').words
 
 const app = express()
+const WHITELISTED_FRONTEND = process.env.FRONTEND_URL || 'http://localhost:3000'
 
-// app.use(cors({origin: 'http://localhost:3000'}));
+// app.use(cors({ origin: WHITELISTED_FRONTEND }));
 app.use(cors());
 app.use(express.json())
 
@@ -17,7 +18,7 @@ const requestLogger = (request, response, next) => {
 }
 
 app.use(requestLogger)
-app.use(express.static('build'))
+// app.use(express.static('build'))
 
 const Teams = {
     NEUTRAL: 0,
@@ -35,7 +36,6 @@ function shuffleArray(array) {
     return shuffledArray;
 }
 
-let boardState = {};
 const lobbies = [];
 
 const generateUniqueNumbers = (max) => {
@@ -54,13 +54,13 @@ const generateUniqueNumbers = (max) => {
 }
 
 const maxGames = 100000
-const generateUniqueGameId = generateUniqueNumbers(100000)
+const generateUniqueGameId = generateUniqueNumbers(maxGames)
 
 function generateNewBoardState() {
     const newKey = [
       ...Array(8).fill(Teams.RED),
       ...Array(8).fill(Teams.BLUE),
-      ...Array(7).fill(Teams.NEUTRAL), 
+      ...Array(7).fill(Teams.NEUTRAL),
       Teams.BLACK
     ]
     const newStartingTeam = Math.random() < 0.5 ? Teams.RED : Teams.BLUE;
@@ -73,7 +73,7 @@ function generateNewBoardState() {
         startingTeam: newStartingTeam,
         revealedCards: [],
         currentGuessingTeam: newStartingTeam,
-        clue: { text: '', guesses: 0}
+        clue: { text: '', guesses: 0 }
     }
     return newBoardState
 }
@@ -87,7 +87,7 @@ app.get('/boards', (request, response) => {
 app.get('/newGame', (request, response) => {
     const newBoardState = generateNewBoardState()
     lobbies.push(newBoardState)
-    
+
     // doesn't work on old JS versions
     // response.json(lobbies.at(-1))
     response.json(lobbies[lobbies.length-1])
