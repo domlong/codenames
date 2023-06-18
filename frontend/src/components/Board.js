@@ -21,8 +21,7 @@ function Board() {
 
   // networking stuff
   const waitTime = 3000
-  // const baseUrl = 'http://localhost:8080'
-  const baseUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8080'
+  const baseUrl = process.env.REACT_APP_BACKEND_URL
 
   // const clearGamePolling = (intervalId)
 
