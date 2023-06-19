@@ -1,6 +1,6 @@
-import Card from "./Card";
+import Card from './Card'
 import '../styles/Grid.css'
-import { TeamStyleTags } from "./consts";
+import { TeamStyleTags } from '../consts'
 
 function Grid({
   words,
@@ -26,12 +26,12 @@ function Grid({
       />
     )
   })
-    
+
   return (
     <div className={`grid ${TeamStyleTags[startingTeam]}`}>
-        {cards}
+      {cards}
     </div>
-  );
+  )
 }
 
-export default Grid;
+export default Grid

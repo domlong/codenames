@@ -1,5 +1,5 @@
 import '../styles/Grid.css'
-import { useState } from "react";
+import { useState } from 'react'
 
 function Clue({
   clue,
@@ -11,11 +11,11 @@ function Clue({
 
   const [clueText, setClueText] = useState('')
 
-  const nums = [ 0, ...Array.from({length: 9}, (_, i) => i + 1)]
+  const nums = [ 0, ...Array.from({ length: 9 }, (_, i) => i + 1)]
 
   const buttons = nums.map((num, index) => {
     return (
-      <button key={index} onClick={()=>sendClue({ text: clueText, guesses: num})}>{num}</button>
+      <button key={index} onClick={() => sendClue({ text: clueText, guesses: num })}>{num}</button>
     )
   })
 
@@ -32,7 +32,7 @@ function Clue({
   }
 
   return (
-    <div className={`clue`}>
+    <div className={'clue'}>
       <h2>{cluePrompt()}</h2>
       { isVisible &&
         <div>
@@ -41,7 +41,7 @@ function Clue({
           </div>
       }
     </div>
-  );
+  )
 }
 
-export default Clue;
+export default Clue

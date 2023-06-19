@@ -1,9 +1,9 @@
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef } from 'react'
 // import wordList from "../words";
-import Grid from "./Grid";
-import Clue from "./Clue";
+import Grid from './Grid'
+import Clue from './Clue'
 import '../styles/Grid.css'
-import { PlayerRoles, Teams, TeamNames } from "./consts";
+import { PlayerRoles, Teams, TeamNames } from '../consts'
 
 function Board() {
   const [key, setKey] = useState([])
@@ -12,7 +12,7 @@ function Board() {
   const [playerTeam, setPlayerTeam] = useState(Teams.RED)
   const [startingTeam, setStartingTeam] = useState()
   const [currentGuessingTeam, setCurrentGuessingTeam] = useState(null)
-  const [clue, setClue] = useState({ text: '', guesses: 0})
+  const [clue, setClue] = useState({ text: '', guesses: 0 })
   const [words, setWords] = useState([])
   const [gameIdInput, setGameIdInput] = useState(0)
   const [gameId, setGameId] = useState(null)
@@ -21,6 +21,7 @@ function Board() {
 
   // networking stuff
   const waitTime = 3000
+  // eslint-disable-next-line no-undef
   const baseUrl = process.env.REACT_APP_BACKEND_URL
 
   // const clearGamePolling = (intervalId)
@@ -32,7 +33,7 @@ function Board() {
 
       // ok this doesn't work natty cause setInterval is funky in React
       // see Dan Abramov's post
-      // 
+      //
       // if(JSON.stringify(data.revealedCards) !== JSON.stringify(revealedCards)) {
       //   setRevealedCards(data.revealedCards)
       // }
@@ -56,7 +57,7 @@ function Board() {
       setKey(data.boardKey)
       setWords(data.words)
       setGameId(data.gameId)
-      timerId.current = setInterval(()=>fetchBoardState(data.gameId), waitTime);
+      timerId.current = setInterval(() => fetchBoardState(data.gameId), waitTime)
       if(previousGameId.current) {
         patchBoardState({
           nextGameId: data.gameId
@@ -69,24 +70,24 @@ function Board() {
       const gameUrl = baseUrl + '/boards/' + gameId
       try {
         const response = await fetch(gameUrl, {
-          method: "PATCH",
+          method: 'PATCH',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(board),
-        });
+        })
 
-        const result = await response.text();
-        console.log("Success:", result);
+        const result = await response.text()
+        console.log('Success:', result)
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error)
       }
   }
 
   // useEffect(() => {
   //   const intervalId = setInterval(fetchBoardState, waitTime);
   //     return () => clearInterval(intervalId)
-  // }, [])  
+  // }, [])
 
   const togglePlayerRole = (event) => {
     setPlayerRole(event.target.value)
@@ -96,7 +97,7 @@ function Board() {
     setPlayerTeam(parseInt(event.target.value))
   }
 
-  const itIsYourTurn = playerTeam === currentGuessingTeam;
+  const itIsYourTurn = playerTeam === currentGuessingTeam
 
   const selectCard = (cardId) => {
     // disabled mandatory clue while testing
@@ -113,7 +114,7 @@ function Board() {
         }
     }
   }
-  
+
   const handleFinishTurn = () => {
     togglePlayerTeamTurn()
   }
@@ -136,17 +137,17 @@ function Board() {
       setCurrentGuessingTeam(Teams.BLUE)
       patchBoardState({
         currentGuessingTeam: Teams.BLUE,
-        clue: { text: '', guesses: 0}
+        clue: { text: '', guesses: 0 }
       }, gameId)
     }
     else {
       setCurrentGuessingTeam(Teams.RED)
       patchBoardState({
         currentGuessingTeam: Teams.RED,
-        clue: { text: '', guesses: 0}
+        clue: { text: '', guesses: 0 }
       }, gameId)
     }
-    setClue({ text: '', guesses: 0})
+    setClue({ text: '', guesses: 0 })
   }
 
   function checkWinCondition() {
@@ -170,16 +171,16 @@ function Board() {
     return Object.keys(Teams).find(key => Teams[key] === parseInt(teamNum))
   }
 
-  const winner = Object.keys(scores).reduce((a,b) => scores[a] > scores[b] ? a : b );
+  const winner = Object.keys(scores).reduce((a,b) => scores[a] > scores[b] ? a : b )
 
   const joinGame = (gameId) => {
     setGameId(gameId)
     fetchBoardState(gameId)
     clearInterval(timerId.current)
-    timerId.current = setInterval(()=>fetchBoardState(gameId), waitTime);
+    timerId.current = setInterval(() => fetchBoardState(gameId), waitTime)
   }
 
-  const hostGame = () => {
+  function hostGame() {
     startNewGame()
   }
 
@@ -198,15 +199,16 @@ function Board() {
   if (!gameId) {
     return (
       <div id='splash'>
+        <h1>Crudnames</h1>
         <input type="number" onChange={e => setGameIdInput(e.target.value)}></input>
-        <button onClick={()=>joinGame(gameIdInput)}>Join</button>
+        <button onClick={() => joinGame(gameIdInput)}>Join</button>
         <button onClick={hostGame}>Host Game</button>
         <h3>{`Team: ${TeamNames[playerTeam]}`}</h3>
-        <button onClick={()=>setPlayerTeam(Teams.RED)}>Red Team</button>
-        <button onClick={()=>setPlayerTeam(Teams.BLUE)}>Blue Team</button>
+        <button onClick={() => setPlayerTeam(Teams.RED)}>Red Team</button>
+        <button onClick={() => setPlayerTeam(Teams.BLUE)}>Blue Team</button>
         <h3>{`Role: ${playerRole}`}</h3>
-        <button onClick={()=>setPlayerRole(PlayerRoles.Spymaster)}>Spymaster (cluegiver)</button>
-        <button onClick={()=>setPlayerRole(PlayerRoles.Operative)}>Operative (guesser)</button>
+        <button onClick={() => setPlayerRole(PlayerRoles.Spymaster)}>Spymaster (cluegiver)</button>
+        <button onClick={() => setPlayerRole(PlayerRoles.Operative)}>Operative (guesser)</button>
       </div>
     )
   }
@@ -214,21 +216,22 @@ function Board() {
   return (
 
     <div id='board'>
+      <h1>Crudnames</h1>
       <div id='gameId'>
         <h2 style={{ display: 'inline' }}>{`Game ID: ${gameId}`}</h2>
         <button onClick={() => {navigator.clipboard.writeText(gameId)}}>Copy Game ID</button>
       </div>
-      <h2 style={{ color: `${getTeamName(playerTeam)}`}}>YOU ARE TEAM {getTeamName(playerTeam)}</h2>
+      <h2 style={{ color: `${getTeamName(playerTeam)}` }}>YOU ARE TEAM {getTeamName(playerTeam)}</h2>
       {!isGameOver &&
       <div>
-        <h2 style={{ color: `${getTeamName(currentGuessingTeam)}`}}>{`IT IS ${getTeamName(currentGuessingTeam)}'S TURN`}</h2>
+        <h2 style={{ color: `${getTeamName(currentGuessingTeam)}` }}>{`IT IS ${getTeamName(currentGuessingTeam)}'S TURN`}</h2>
         <h2>{`red: ${scores[Teams.RED]}, blue: ${scores[Teams.BLUE]}`}</h2>
       </div>
       }
       {isGameOver &&
         <div>
           <h2>GAME OVER</h2>
-          <h2 style={{ color: `${getTeamName(winner)}`}}>{`${getTeamName(winner)} WINS!!`}</h2>
+          <h2 style={{ color: `${getTeamName(winner)}` }}>{`${getTeamName(winner)} WINS!!`}</h2>
         </div>
       }
       <select value={playerRole} onChange={togglePlayerRole} >
@@ -257,7 +260,7 @@ function Board() {
         isGameOver={isGameOver}
       />
     </div>
-  );
+  )
 }
 
-export default Board;
+export default Board

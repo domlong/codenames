@@ -77,7 +77,11 @@ app.patch('/boards/:id', (request, response) => {
     response.send(`Board #${id} updated`)
 })
 
-app.use(middleware.unknownEndpoint)
-app.use(middleware.errorHandler)
+// testing
+app.post('/api/testing/reset', (request, response) => {
+    lobbies.length = 0
+    response.status(204).end()
+})
+
 
 module.exports = app
