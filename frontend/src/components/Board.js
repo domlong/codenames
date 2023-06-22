@@ -22,7 +22,8 @@ function Board() {
   // networking stuff
   const waitTime = 3000
   // eslint-disable-next-line no-undef
-  const baseUrl = process.env.REACT_APP_BACKEND_URL
+  // const baseUrl = process.env.REACT_APP_BACKEND_URL
+  const baseUrl = ''
 
   // const clearGamePolling = (intervalId)
 
@@ -49,7 +50,8 @@ function Board() {
   }
 
   const fetchNewGame = () => {
-    const newGameUrl = baseUrl + '/newGame'
+    // const newGameUrl = baseUrl + '/newGame'
+    const newGameUrl = '/newGame'
     fetch(newGameUrl).then(response => response.json()).then(data => {
       setRevealedCards(data.revealedCards)
       setStartingTeam(data.startingTeam)
