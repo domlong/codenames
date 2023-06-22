@@ -24,7 +24,10 @@ function Clue({
       return 'GAME OVER'
     }
     if(waitingForClue) {
-      return 'Waiting for clue...'
+      if(isVisible) {
+        return 'Please enter clue.'
+      }
+      else return 'Waiting for clue...'
     }
     else {
       return `Clue: ${clue.text}, ${clue.guesses}`
