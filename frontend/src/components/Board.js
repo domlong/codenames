@@ -21,14 +21,11 @@ function Board() {
 
   // networking stuff
   const waitTime = 3000
-  // eslint-disable-next-line no-undef
-  // const baseUrl = process.env.REACT_APP_BACKEND_URL
-  const baseUrl = ''
 
   // const clearGamePolling = (intervalId)
 
   const fetchBoardState = (gameId) => {
-    const gameUrl = baseUrl + '/boards/' + gameId
+    const gameUrl = '/boards/' + gameId
     fetch(gameUrl).then(response => response.json()).then(data => {
       setKey(data.boardKey)
 
@@ -50,9 +47,7 @@ function Board() {
   }
 
   const fetchNewGame = () => {
-    // const newGameUrl = baseUrl + '/newGame'
-    const newGameUrl = '/newGame'
-    fetch(newGameUrl).then(response => response.json()).then(data => {
+    fetch('/newGame').then(response => response.json()).then(data => {
       setRevealedCards(data.revealedCards)
       setStartingTeam(data.startingTeam)
       setCurrentGuessingTeam(data.currentGuessingTeam)
@@ -69,7 +64,7 @@ function Board() {
   }
 
   async function patchBoardState(board, gameId) {
-      const gameUrl = baseUrl + '/boards/' + gameId
+      const gameUrl = '/boards/' + gameId
       try {
         const response = await fetch(gameUrl, {
           method: 'PATCH',
@@ -91,12 +86,22 @@ function Board() {
   //     return () => clearInterval(intervalId)
   // }, [])
 
-  const togglePlayerRole = (event) => {
-    setPlayerRole(event.target.value)
+  const togglePlayerRole = () => {
+    if(playerRole === PlayerRoles.Operative) {
+      setPlayerRole(PlayerRoles.Spymaster)
+    }
+    if(playerRole === PlayerRoles.Spymaster) {
+      setPlayerRole(PlayerRoles.Operative)
+    }
   }
 
-  const togglePlayerTeam = (event) => {
-    setPlayerTeam(parseInt(event.target.value))
+  const togglePlayerTeam = () => {
+    if(playerTeam === Teams.RED) {
+      setPlayerTeam(Teams.BLUE)
+    }
+    if(playerTeam === Teams.BLUE) {
+      setPlayerTeam(Teams.RED)
+    }
   }
 
   const itIsYourTurn = playerTeam === currentGuessingTeam
@@ -236,13 +241,8 @@ function Board() {
           <h2 style={{ color: `${getTeamName(winner)}` }}>{`${getTeamName(winner)} WINS!!`}</h2>
         </div>
       }
-      <select value={playerRole} onChange={togglePlayerRole} >
-        {Object.keys(PlayerRoles).map((key) => (<option key={key} value={PlayerRoles[key]}>{key}</option>))}
-      </select>
-      <select value={playerTeam} onChange={togglePlayerTeam} >
-        <option value={Teams.RED}>Red</option>
-        <option value={Teams.BLUE}>Blue</option>
-      </select>
+      <button onClick={togglePlayerRole} disabled={isGameOver}>Toggle Role</button>
+      <button onClick={togglePlayerTeam} disabled={isGameOver}>Toggle Team</button>
       <button onClick={handleFinishTurn} disabled={isGameOver}>Finish Turn</button>
       <button onClick={startNewGame}>New Game</button>
       <Clue
