@@ -1,0 +1,15 @@
+name: Render Deploy
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  on-success:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy on Render?
+      uses: johnbeynon/render-deploy-action@v0.0.8
+      with:
+        api-key: ${{ secrets.RENDER_API_KEY }}
+        service-id: ${{ secrets.RENDER_SERVICE_ID}}

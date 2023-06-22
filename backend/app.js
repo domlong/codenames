@@ -5,6 +5,7 @@ const middleware = require('./utils/middleware')
 const wordList = require('./words').words
 const { shuffleArray, generateUniqueNumbers , Teams } = require('./utils/lobby_helper')
 
+
 app.use(cors());
 // app.use(express.static('build'))
 app.use(express.json())

@@ -1,4 +1,5 @@
 node_modules
 build
 .eslintrc.js
+cypress.config.js
 reportWebVitals.js
