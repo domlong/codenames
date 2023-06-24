@@ -12,9 +12,11 @@ body {
 
 .container-centred {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
+  gap: 20px;
 }
 
 #splash {
@@ -52,4 +54,21 @@ button {
 h1, h2, h3 {
   margin-top: 10px;
   margin-bottom: 0;
+}
+
+#invalid-game {
+  background-color:rgba(255, 255, 255, 0.3);
+  padding: 20px;
+  border-radius: 20px;
+  box-sizing: content-box;
+}
+
+.alert-shown {
+  opacity: 1;
+  transition: all 250ms linear;
+}
+
+.alert-hidden {
+  opacity: 0;
+  transition: all 250ms linear 4s;
 }

@@ -1,5 +1,4 @@
 import { useState, useMemo, useRef } from 'react'
-// import wordList from "../words";
 import Grid from './Grid'
 import Clue from './Clue'
 import '../styles/Grid.css'
@@ -17,25 +16,19 @@ function Board() {
   const [words, setWords] = useState([])
   const [gameIdInput, setGameIdInput] = useState(0)
   const [gameId, setGameId] = useState(null)
+  const [invalidGameId, setInvalidGameId] = useState(false)
   const timerId = useRef(null)
   const previousGameId = useRef(null)
 
   // networking stuff
   const waitTime = 3000
 
-  // const clearGamePolling = (intervalId)
-
-  const fetchBoardState = (gameId) => {
+  const fetchBoardState = async (gameId) => {
     const gameUrl = '/boards/' + gameId
-    fetch(gameUrl).then(response => response.json()).then(data => {
+    const response = await fetch(gameUrl)
+    if(response.ok) {
+      const data = await response.json()
       setKey(data.boardKey)
-
-      // ok this doesn't work natty cause setInterval is funky in React
-      // see Dan Abramov's post
-      //
-      // if(JSON.stringify(data.revealedCards) !== JSON.stringify(revealedCards)) {
-      //   setRevealedCards(data.revealedCards)
-      // }
       setRevealedCards(data.revealedCards)
       setCurrentGuessingTeam(data.currentGuessingTeam)
       setClue(data.clue)
@@ -44,7 +37,8 @@ function Board() {
       if(data.nextGameId){
         joinGame(data.nextGameId)
       }
-    })
+    }
+    return response.ok
   }
 
   const fetchNewGame = () => {
@@ -81,11 +75,6 @@ function Board() {
         console.error('Error:', error)
       }
   }
-
-  // useEffect(() => {
-  //   const intervalId = setInterval(fetchBoardState, waitTime);
-  //     return () => clearInterval(intervalId)
-  // }, [])
 
   const togglePlayerRole = () => {
     if(playerRole === PlayerRoles.Operative) {
@@ -181,9 +170,19 @@ function Board() {
 
   const winner = Object.keys(scores).reduce((a,b) => scores[a] > scores[b] ? a : b )
 
-  const joinGame = (gameId) => {
-    setGameId(gameId)
-    fetchBoardState(gameId)
+  const joinGame = async (gameId) => {
+    const doesGameExist = await fetchBoardState(gameId)
+    if (doesGameExist) {
+      setInvalidGameId(false)
+      setGameId(gameId)
+      startPolling(gameId)
+    }
+    else {
+      setInvalidGameId(true)
+    }
+  }
+
+  const startPolling = (gameId) => {
     clearInterval(timerId.current)
     timerId.current = setInterval(() => fetchBoardState(gameId), waitTime)
   }
@@ -220,7 +219,11 @@ function Board() {
             <button onClick={() => joinGame(gameIdInput)}>Join Room</button>
           </div>
           <button onClick={hostGame}>Create Room</button>
-        </div>
+      </div>
+      <div id='invalid-game' className={`${invalidGameId ? 'alert-shown' : 'alert-hidden'}`}
+          onTransitionEnd={() => setInvalidGameId(false)}>
+              <p>Game does not exist. Enter valid game ID or create a room.</p>
+          </div>
       </div>
     )
   }
