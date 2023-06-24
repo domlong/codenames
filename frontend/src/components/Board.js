@@ -3,6 +3,7 @@ import { useState, useMemo, useRef } from 'react'
 import Grid from './Grid'
 import Clue from './Clue'
 import '../styles/Grid.css'
+import '../styles/Board.css'
 import { PlayerRoles, Teams, TeamNames } from '../consts'
 
 function Board() {
@@ -205,17 +206,21 @@ function Board() {
 
   if (!gameId) {
     return (
-      <div id='splash'>
-        <h1>Crudnames</h1>
-        <input type="number" onChange={e => setGameIdInput(e.target.value)}></input>
-        <button onClick={() => joinGame(gameIdInput)}>Join</button>
-        <button onClick={hostGame}>Host Game</button>
-        <h3>{`Team: ${TeamNames[playerTeam]}`}</h3>
-        <button onClick={() => setPlayerTeam(Teams.RED)}>Red Team</button>
-        <button onClick={() => setPlayerTeam(Teams.BLUE)}>Blue Team</button>
-        <h3>{`Role: ${playerRole}`}</h3>
-        <button onClick={() => setPlayerRole(PlayerRoles.Spymaster)}>Spymaster (cluegiver)</button>
-        <button onClick={() => setPlayerRole(PlayerRoles.Operative)}>Operative (guesser)</button>
+      <div className='container-centred'>
+        <div id='splash'>
+          <h1>Crudnames</h1>
+          <h3>{`Select Team: ${TeamNames[playerTeam]}`}</h3>
+          <button onClick={() => setPlayerTeam(Teams.RED)}>Red Team</button>
+          <button onClick={() => setPlayerTeam(Teams.BLUE)}>Blue Team</button>
+          <h3>{`Select Role: ${playerRole}`}</h3>
+          <button onClick={() => setPlayerRole(PlayerRoles.Spymaster)}>Spymaster (cluegiver)</button>
+          <button onClick={() => setPlayerRole(PlayerRoles.Operative)}>Operative (guesser)</button>
+          <div id="join-game">
+            <input type="number" placeholder="Enter Game ID" onChange={e => setGameIdInput(e.target.value)}></input>
+            <button onClick={() => joinGame(gameIdInput)}>Join Room</button>
+          </div>
+          <button onClick={hostGame}>Create Room</button>
+        </div>
       </div>
     )
   }
@@ -223,28 +228,30 @@ function Board() {
   return (
 
     <div id='board'>
-      <h1>Crudnames</h1>
-      <div id='gameId'>
-        <h2 style={{ display: 'inline' }}>{`Game ID: ${gameId}`}</h2>
-        <button onClick={() => {navigator.clipboard.writeText(gameId)}}>Copy Game ID</button>
-      </div>
-      <h2 style={{ color: `${getTeamName(playerTeam)}` }}>YOU ARE TEAM {getTeamName(playerTeam)}</h2>
-      {!isGameOver &&
-      <div>
-        <h2 style={{ color: `${getTeamName(currentGuessingTeam)}` }}>{`IT IS ${getTeamName(currentGuessingTeam)}'S TURN`}</h2>
-        <h2>{`red: ${scores[Teams.RED]}, blue: ${scores[Teams.BLUE]}`}</h2>
-      </div>
-      }
-      {isGameOver &&
-        <div>
-          <h2>GAME OVER</h2>
-          <h2 style={{ color: `${getTeamName(winner)}` }}>{`${getTeamName(winner)} WINS!!`}</h2>
+      <div id='splash'>
+        <h1>Crudnames</h1>
+        <div id='gameId'>
+          <h2 style={{ display: 'inline' }}>{`Game ID: ${gameId}`}</h2>
+          <button onClick={() => {navigator.clipboard.writeText(gameId)}}>Copy Game ID</button>
         </div>
-      }
-      <button onClick={togglePlayerRole} disabled={isGameOver}>Toggle Role</button>
-      <button onClick={togglePlayerTeam} disabled={isGameOver}>Toggle Team</button>
-      <button onClick={handleFinishTurn} disabled={isGameOver}>Finish Turn</button>
-      <button onClick={startNewGame}>New Game</button>
+        <h2 style={{ color: `${getTeamName(playerTeam)}` }}>YOU ARE TEAM {getTeamName(playerTeam)}</h2>
+        {!isGameOver &&
+        <div>
+          <h2 style={{ color: `${getTeamName(currentGuessingTeam)}` }}>{`IT IS ${getTeamName(currentGuessingTeam)}'S TURN`}</h2>
+          <h2>{`red: ${scores[Teams.RED]}, blue: ${scores[Teams.BLUE]}`}</h2>
+        </div>
+        }
+        {isGameOver &&
+          <div>
+            <h2>GAME OVER</h2>
+            <h2 style={{ color: `${getTeamName(winner)}` }}>{`${getTeamName(winner)} WINS!!`}</h2>
+          </div>
+        }
+        <button onClick={togglePlayerRole} disabled={isGameOver}>Toggle Role</button>
+        <button onClick={togglePlayerTeam} disabled={isGameOver}>Toggle Team</button>
+        <button onClick={handleFinishTurn} disabled={isGameOver}>Finish Turn</button>
+        <button onClick={startNewGame}>New Game</button>
+      </div>
       <Clue
         clue={clue}
         sendClue={sendClue}

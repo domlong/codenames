@@ -8,8 +8,8 @@ describe('Codenames', function() {
     cy.contains('Crudnames')
   })
 
-  it('game can be hosted', function() {
-    cy.contains('Host Game').click()
+  it('lobby can be created', function() {
+    cy.contains('Create Room').click()
     cy.get('.grid > button').should('have.class', 'card')
   })
 
