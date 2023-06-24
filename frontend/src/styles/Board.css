@@ -1,0 +1,55 @@
+:root {
+  --red:  lightcoral;
+  --blue: lightskyblue;
+  --neutral: bisque;
+}
+
+body {
+    background: radial-gradient(at 50% 100%, #f5a908, #a82052 60%, #6d0343 80%);
+    background-attachment: fixed;
+    margin: 0;
+}
+
+.container-centred {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+#splash {
+  background-color:rgba(255, 255, 255, 0.3);
+  max-width: 350px;
+  padding: 20px;
+  border-radius: 20px;
+}
+
+#splash h1 {
+    margin-top: 0;
+}
+
+#splash input[type=number] {
+  appearance: textfield;
+
+  /* padding:10px; */
+  /* border:0; */
+  /* border-radius:10px; */
+
+  box-shadow:0 0 15px 4px rgba(0,0,0,0.2);
+  /* box-sizing: border-box; */
+
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+button {
+  margin-top: 10px
+}
+
+h1, h2, h3 {
+  margin-top: 10px;
+  margin-bottom: 0;
+}

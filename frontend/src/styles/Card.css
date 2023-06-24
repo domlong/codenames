@@ -17,15 +17,15 @@
 }
 
 .card.teamA {
-    background-color: lightcoral;
+    background-color: var(--red);
 }
 
 .card.teamB {
-    background-color: lightskyblue;
+    background-color: var(--blue);
 }
 
 .card.neutral {
-    background-color: bisque;
+    background-color: var(--neutral);
 }
 
 .card.assassin {
