@@ -2,5 +2,5 @@
 
 echo "Starting test..."
 
-npm start --prefix ./frontend ./frontend
+npm start --prefix ./frontend ./frontend &
 npm run dev --prefix ./backend
