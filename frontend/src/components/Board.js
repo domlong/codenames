@@ -21,7 +21,7 @@ function Board() {
   const previousGameId = useRef(null)
 
   // networking stuff
-  const waitTime = 3000
+  const waitTime = 1000
 
   const fetchBoardState = async (gameId) => {
     const gameUrl = '/boards/' + gameId
