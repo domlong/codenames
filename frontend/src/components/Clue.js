@@ -4,6 +4,7 @@ import { useState } from 'react'
 function Clue({
   clue,
   sendClue,
+  itIsYourTurn,
   isVisible,
   waitingForClue,
   gameOver
@@ -36,8 +37,9 @@ function Clue({
 
   return (
     <div className={'clue'}>
+      {!gameOver && <h2>{`It is your ${itIsYourTurn ? 'team\'s ' : 'opponent\'s '} turn.`}</h2>}
       <h2>{cluePrompt()}</h2>
-      { isVisible &&
+      { isVisible && waitingForClue &&
         <div>
           <input onChange={e => setClueText(e.target.value)}/>
           {buttons}

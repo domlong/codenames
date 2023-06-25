@@ -69,8 +69,9 @@ function Board() {
           body: JSON.stringify(board),
         })
 
+        // eslint-disable-next-line no-unused-vars
         const result = await response.text()
-        console.log('Success:', result)
+        // console.log('Success:', result)
       } catch (error) {
         console.error('Error:', error)
       }
@@ -237,17 +238,17 @@ function Board() {
           <h2 style={{ display: 'inline' }}>{`Game ID: ${gameId}`}</h2>
           <button onClick={() => {navigator.clipboard.writeText(gameId)}}>Copy Game ID</button>
         </div>
-        <h2 style={{ color: `${getTeamName(playerTeam)}` }}>YOU ARE TEAM {getTeamName(playerTeam)}</h2>
+        <h2 style={{ color: `var(--${getTeamName(playerTeam).toLowerCase()})` }}>You are on team {getTeamName(playerTeam)}</h2>
         {!isGameOver &&
         <div>
-          <h2 style={{ color: `${getTeamName(currentGuessingTeam)}` }}>{`IT IS ${getTeamName(currentGuessingTeam)}'S TURN`}</h2>
+          {/* <h2 style={{ color: `${getTeamName(currentGuessingTeam)}` }}>{`IT IS ${getTeamName(currentGuessingTeam)}'S TURN`}</h2> */}
           <h2>{`red: ${scores[Teams.RED]}, blue: ${scores[Teams.BLUE]}`}</h2>
         </div>
         }
         {isGameOver &&
           <div>
             <h2>GAME OVER</h2>
-            <h2 style={{ color: `${getTeamName(winner)}` }}>{`${getTeamName(winner)} WINS!!`}</h2>
+            <h2 style={{ color: `var(--${getTeamName(winner).toLowerCase()})` }}>{`${getTeamName(winner)} WINS!!`}</h2>
           </div>
         }
         <button onClick={togglePlayerRole} disabled={isGameOver}>Toggle Role</button>
@@ -258,6 +259,7 @@ function Board() {
       <Clue
         clue={clue}
         sendClue={sendClue}
+        itIsYourTurn={itIsYourTurn}
         isVisible={isClueGiver}
         waitingForClue={waitingForClue}
         gameOver={isGameOver}
