@@ -1,7 +1,6 @@
 # Codenames
 
 ## [Play](https://codenames-1jf1.onrender.com/)
----
 This is a an online multiplayer implementation of the popular board game _Codenames_.
 
 >_**Codenames**_ is a game played by 4 or more players in which players are split into two teams, red and blue, and guess words based on clues from their teammates. One player from each team becomes the spymaster, while the others play as field operatives.The end goal is to place all of the team’s agent tiles. 

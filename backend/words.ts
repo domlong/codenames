@@ -399,6 +399,6 @@ const words = [
     "WITCH",
     "WORM",
     "YARD"
-]
+];
 
-exports.words = words;
+export default words;
