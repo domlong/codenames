@@ -8,7 +8,6 @@ import { Team, Board } from './types';
 const app = express();
 
 app.use(cors());
-// app.use(express.static('build'));
 app.use(express.json());
 app.use(middleware.requestLogger);
 
@@ -42,18 +41,12 @@ app.get('/boards', (_request, response) => {
     response.json(lobbies);
 });
 
-// post to new game endpoint
-// CHANGE THIS TO A POST CALL
-app.get('/newGame', (_request, response) => {
+app.post('/newGame', (_request, response) => {
     const newBoardState = generateNewBoardState();
     lobbies.push(newBoardState);
-
-    // doesn't work on old JS versions
-    // response.json(lobbies.at(-1))
     response.json(lobbies[lobbies.length-1]);
 });
 
-// get game state for specific game ID
 app.get('/boards/:id', (request, response) => {
     const id = Number(request.params.id);
     const board = lobbies.find(board => board.gameId === id);
@@ -76,7 +69,7 @@ app.patch('/boards/:id', (request, response) => {
         } else {
             lobbies[boardIndex][attribute] = value;
         }
-    })
+    });
     response.send(`Board #${id} updated`);
 });
 

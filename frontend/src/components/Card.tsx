@@ -1,5 +1,16 @@
 import '../styles/Card.css'
-import { PlayerRoles, Teams, TeamStyleTags } from '../consts'
+import { TeamStyleTags } from '../consts'
+import { Role, Team } from '../types'
+
+interface Props {
+    id: number
+    word: string
+    category: Team
+    playerRole: Role
+    revealCard: (id: number) => void
+    isRevealed: boolean
+    gameOver: boolean
+}
 
 function Card({
     id,
@@ -8,18 +19,15 @@ function Card({
     playerRole,
     revealCard,
     isRevealed,
-    gameOver,
+    gameOver
+}: Props) {
 
-}) {
-
-    // Make button to let Operatives see the entire board if game is over
-
-    function determineCardColour(isRevealed, category, playerRole) {
+    function determineCardColour(isRevealed: boolean, category: Team, playerRole: Role) {
         if ( isRevealed ) {
             return TeamStyleTags[category]
         }
-        if ( playerRole !== PlayerRoles.Spymaster) {
-            return TeamStyleTags[Teams.NEUTRAL]
+        if ( playerRole !== Role.Spymaster) {
+            return TeamStyleTags[Team.NEUTRAL]
         }
         return TeamStyleTags[category]
     }

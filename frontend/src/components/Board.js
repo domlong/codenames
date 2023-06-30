@@ -41,21 +41,32 @@ function Board() {
     return response.ok
   }
 
-  const fetchNewGame = () => {
-    fetch('/newGame').then(response => response.json()).then(data => {
-      setRevealedCards(data.revealedCards)
-      setStartingTeam(data.startingTeam)
-      setCurrentGuessingTeam(data.currentGuessingTeam)
-      setKey(data.boardKey)
-      setWords(data.words)
-      setGameId(data.gameId)
-      timerId.current = setInterval(() => fetchBoardState(data.gameId), waitTime)
-      if(previousGameId.current) {
-        patchBoardState({
-          nextGameId: data.gameId
-        }, previousGameId.current)
+  const fetchNewGame = async () => {
+    try {
+      const response = await fetch('/newGame', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+      const data = await response.json()
+      if(data) {
+        setRevealedCards(data.revealedCards)
+        setStartingTeam(data.startingTeam)
+        setCurrentGuessingTeam(data.currentGuessingTeam)
+        setKey(data.boardKey)
+        setWords(data.words)
+        setGameId(data.gameId)
+        timerId.current = setInterval(() => fetchBoardState(data.gameId), waitTime)
+        if(previousGameId.current) {
+          patchBoardState({
+            nextGameId: data.gameId
+          }, previousGameId.current)
+        }
       }
-    })
+    } catch (error) {
+      console.error('Error:', error)
+    }
   }
 
   async function patchBoardState(board, gameId) {
@@ -69,9 +80,8 @@ function Board() {
           body: JSON.stringify(board),
         })
 
-        // eslint-disable-next-line no-unused-vars
-        const result = await response.text()
-        // console.log('Success:', result)
+        // eslint-disable-next-line
+        const _result = await response.text()
       } catch (error) {
         console.error('Error:', error)
       }
