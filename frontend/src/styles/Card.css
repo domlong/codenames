@@ -1,29 +1,8 @@
 .card {
-    box-shadow: 2px 3px 8px 0 black;
     aspect-ratio: 2.2 / 1;
     border-radius: 10px;
     user-select: none;
     font-size: 20px;
-}
-
-.card.teamA {
-    background-color: var(--red);
-}
-
-.card.teamB {
-    background-color: var(--blue);
-}
-
-.card.neutral {
-    background-color: var(--neutral);
-}
-
-.card.assassin {
-    background-color: grey;
-}
-
-.card.revealed {
-    font-size: 0;
 }
 
 .card {
@@ -33,6 +12,10 @@
 	grid-template-areas: "overlap"
 }
 
+.card:not(.flip) .front{
+    box-shadow: 2px 3px 8px 0 black;
+}
+
 .front {
 	grid-area: overlap;
 }
@@ -40,7 +23,9 @@
 .back {
 	transform: RotateY(180deg);
 	grid-area: overlap;
+    box-shadow: 2px 3px 8px 0 black;
 }
+
 
 .card .teamA {
     background-color: var(--red);
