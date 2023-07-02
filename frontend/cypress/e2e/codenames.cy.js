@@ -10,7 +10,7 @@ describe('Codenames', function() {
 
   it('lobby can be created', function() {
     cy.contains('Create Room').click()
-    cy.get('.grid > button').should('have.class', 'card')
+    cy.get('.grid > div').should('have.class', 'card')
   })
 
   // it('hosted game polls server at correct endpoint', function() {

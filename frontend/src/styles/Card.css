@@ -1,37 +1,58 @@
-/* button {
-    all: unset;
-} */  
-
 .card {
-    box-shadow: 2px 3px 8px 0 black;
-    /* min-height: 100px; */
     aspect-ratio: 2.2 / 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     border-radius: 10px;
     user-select: none;
     font-size: 20px;
-    /* font-family: 'Courier New', Courier, monospace; */
-    /* cursor: pointer; */
 }
 
-.card.teamA {
+.card {
+	transition: 1s all ease-in-out;
+	display: grid;
+	transform-style: preserve-3d;
+	grid-template-areas: "overlap"
+}
+
+.card:not(.flip) .front{
+    box-shadow: 2px 3px 8px 0 black;
+}
+
+.front {
+	grid-area: overlap;
+}
+
+.back {
+	transform: RotateY(180deg);
+	grid-area: overlap;
+    box-shadow: 2px 3px 8px 0 black;
+}
+
+
+.card .teamA {
     background-color: var(--red);
 }
 
-.card.teamB {
+.card .teamB {
     background-color: var(--blue);
 }
 
-.card.neutral {
+.card .neutral {
     background-color: var(--neutral);
 }
 
-.card.assassin {
+.card .assassin {
     background-color: grey;
 }
 
-.card.revealed {
-    font-size: 0;
+.flip {
+	transform: RotateY(180deg)
+}
+
+.back, .front {
+	backface-visibility: hidden;
+	border-radius: 10px;
+    margin: 0;
+}
+
+.card button {
+    font-size: 20px;
 }

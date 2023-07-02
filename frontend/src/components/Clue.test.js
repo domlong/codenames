@@ -12,8 +12,9 @@ test('<Clue /> updates parent state and calls onSubmit', async () => {
     <Clue
     clue={{ text: '', guesses: 0 }}
     sendClue={sendClue}
+    itIsYourTurn
     isVisible={true}
-    // waitingForClue={true}
+    waitingForClue={true}
     // gameOver={isGameOver}
   />)
 
