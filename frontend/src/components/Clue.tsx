@@ -1,5 +1,15 @@
 import '../styles/Grid.css'
 import { useState } from 'react'
+import { Clue as ClueType } from '../types'
+
+interface Props {
+  clue: ClueType
+  sendClue: (clue: ClueType) => void
+  itIsYourTurn: boolean
+  isVisible: boolean
+  waitingForClue: boolean
+  gameOver: boolean
+}
 
 function Clue({
   clue,
@@ -8,7 +18,7 @@ function Clue({
   isVisible,
   waitingForClue,
   gameOver
-}) {
+}: Props) {
 
   const [clueText, setClueText] = useState('')
 
@@ -16,7 +26,7 @@ function Clue({
 
   const buttons = nums.map((num, index) => {
     return (
-      <button key={index} onClick={() => sendClue({ text: clueText, guesses: num })}>{num}</button>
+      <button key={index} onClick={() => sendClue({ text: clueText, number: num })}>{num}</button>
     )
   })
 
@@ -31,7 +41,7 @@ function Clue({
       else return 'Waiting for clue...'
     }
     else {
-      return `Clue: ${clue.text}, ${clue.guesses}`
+      return `Clue: ${clue.text}, ${clue.number}`
     }
   }
 
