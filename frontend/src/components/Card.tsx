@@ -28,8 +28,7 @@ function Card({
         if ( isRevealed ) {
             return TeamStyleTags[category]
         }
-        // if ( playerRole.toLowerCase() === Role.Operative) {
-        if ( playerRole === Role.Operative) {
+        if ( playerRole?.toLowerCase() === Role.Operative) {
             return TeamStyleTags[Team.NEUTRAL]
         }
         return TeamStyleTags[category]
