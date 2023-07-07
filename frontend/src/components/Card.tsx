@@ -29,7 +29,7 @@ function Card({
             return TeamStyleTags[category]
         }
         // if ( playerRole.toLowerCase() === Role.Operative) {
-        if ( playerRole === Role.Operative) {
+        if ( playerRole.toString().toLowerCase() === Role.Operative) {
             return TeamStyleTags[Team.NEUTRAL]
         }
         return TeamStyleTags[category]
