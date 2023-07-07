@@ -26,5 +26,5 @@ test('<Clue /> updates parent state and calls onSubmit', async () => {
   await user.click(sendButton)
 
   expect(sendClue.mock.calls).toHaveLength(1)
-  expect(sendClue.mock.calls[0][0]).toEqual({ text: 'test clue', guesses: 1 })
+  expect(sendClue.mock.calls[0][0]).toEqual({ text: 'test clue', number: 1 })
 })
