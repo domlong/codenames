@@ -4,7 +4,7 @@ import config from './utils/config';
 import logger from './utils/logger';
 import path from 'path';
 
-const buildPath = path.join(__dirname, '..', 'frontend', 'build');
+const buildPath = path.join(__dirname, '../..', 'frontend', 'build');
 
 app.use(express.static(buildPath));
 

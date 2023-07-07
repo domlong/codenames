@@ -8,6 +8,7 @@ interface Props {
     word: string
     category: Team
     playerRole: Role
+    // playerRole: string
     revealCard: (id: number) => void
     isRevealed: boolean
     gameOver: boolean
@@ -23,11 +24,12 @@ function Card({
     gameOver
 }: Props) {
 
-    function determineCardColour(isRevealed: boolean, category: Team, playerRole: Role) {
+    function determineCardColour(isRevealed: boolean, category: Team, playerRole: string) {
         if ( isRevealed ) {
             return TeamStyleTags[category]
         }
-        if ( playerRole !== Role.Spymaster) {
+        // if ( playerRole.toLowerCase() === Role.Operative) {
+        if ( playerRole === Role.Operative) {
             return TeamStyleTags[Team.NEUTRAL]
         }
         return TeamStyleTags[category]
@@ -38,7 +40,7 @@ function Card({
     return (
         <div
             className={`card ${isRevealed ? 'flip' : '' }`}>
-            <button onClick={() => revealCard(id)} className="front neutral">{word}</button>
+            <button disabled={gameOver} onClick={() => revealCard(id)} className={`front ${cardColour}`}>{word}</button>
             <div className={`back ${cardColour}`}></div>
         </div>
     )

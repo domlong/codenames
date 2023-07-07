@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import Grid from './Grid'
 import Clue from './Clue'
 import '../styles/Grid.css'
@@ -17,11 +17,29 @@ function Board() {
   const [gameIdInput, setGameIdInput] = useState(0)
   const [gameId, setGameId] = useState(null)
   const [invalidGameId, setInvalidGameId] = useState(false)
+  const [waitingToJoin, setWaitingToJoin] = useState(false)
   const timerId = useRef(null)
   const previousGameId = useRef(null)
 
   // networking stuff
   const waitTime = 1000
+
+  useEffect(() => {
+    const parsedUrl = new URL(window.location.href)
+    const roomNo = parsedUrl.pathname.replaceAll('/','').replace('room','')
+    if(roomNo) {
+      setGameIdInput(roomNo)
+      setWaitingToJoin(true)
+    }
+  }, [])
+
+  useEffect(() => {
+    if(gameId){
+      const parsedBaseUrl = new URL(window.location.origin)
+      const newRoomUrl = parsedBaseUrl + 'room/' + gameId
+      history.pushState(null, null, newRoomUrl)
+    }
+  }, [gameId])
 
   const fetchBoardState = async (gameId) => {
     const gameUrl = '/boards/' + gameId
@@ -214,7 +232,7 @@ function Board() {
   const isClueGiver = playerRole === PlayerRoles.Spymaster
                         && playerTeam === currentGuessingTeam
 
-  if (!gameId) {
+  if (!gameId | waitingToJoin) {
     return (
       <div className='container-centred'>
         <div id='splash'>
@@ -225,11 +243,20 @@ function Board() {
           <h3>{`Select Role: ${playerRole}`}</h3>
           <button onClick={() => setPlayerRole(PlayerRoles.Spymaster)}>Spymaster (cluegiver)</button>
           <button onClick={() => setPlayerRole(PlayerRoles.Operative)}>Operative (guesser)</button>
+          {waitingToJoin
+            ?
+            <div id="join-game">
+              <button onClick={() => {joinGame(gameIdInput); setWaitingToJoin(false)}}>Join Room {gameIdInput}</button>
+          </div>
+          :
+          <>
           <div id="join-game">
             <input type="number" placeholder="Enter Game ID" onChange={e => setGameIdInput(e.target.value)}></input>
             <button onClick={() => joinGame(gameIdInput)}>Join Room</button>
           </div>
           <button onClick={hostGame}>Create Room</button>
+        </>
+          }
       </div>
       <div id='invalid-game' className={`${invalidGameId ? 'alert-shown' : 'alert-hidden'}`}
           onTransitionEnd={() => setInvalidGameId(false)}>
