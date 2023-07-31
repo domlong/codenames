@@ -34,12 +34,20 @@ function Card({
         return TeamStyleTags[category]
     }
 
+    function determineFrontColour(isRevealed: boolean, category: Team, playerRole: string) {
+        if ( playerRole?.toLowerCase() === Role.Operative) {
+            return TeamStyleTags[Team.NEUTRAL]
+        }
+        return TeamStyleTags[category]
+    }
+
     const cardColour = determineCardColour(isRevealed, category, playerRole)
+    const frontColour = determineFrontColour(isRevealed, category, playerRole)
 
     return (
         <div
             className={`card ${isRevealed ? 'flip' : '' }`}>
-            <button disabled={gameOver} onClick={() => revealCard(id)} className={`front ${cardColour}`}>{word}</button>
+            <button disabled={gameOver} onClick={() => revealCard(id)} className={`front ${frontColour}`}>{word}</button>
             <div className={`back ${cardColour}`}></div>
         </div>
     )
