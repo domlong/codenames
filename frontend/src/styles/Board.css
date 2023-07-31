@@ -32,14 +32,42 @@ body {
 
 #splash input[type=number] {
   appearance: textfield;
-
-  /* padding:10px; */
-  /* border:0; */
-  /* border-radius:10px; */
-
   box-shadow:0 0 15px 4px rgba(0,0,0,0.2);
-  /* box-sizing: border-box; */
+}
 
+@media (min-width: 1200px) {
+  #game-info {
+      grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1200px) {
+  #game-info {
+      grid-template-columns: 1fr 1fr;
+  }
+  .clue {
+    justify-self: center;
+  }
+}
+
+@media (max-width: 800px) {
+  #game-info {
+      grid-template-columns: 1fr;
+  }
+}
+
+#game-info {
+  display: grid;
+}
+
+.clue {
+  margin: 10px auto;
+  text-align: center;
+  align-self: end;
+}
+
+.clue > h2 {
+  margin: 10px auto; 
 }
 
 input::-webkit-outer-spin-button,
