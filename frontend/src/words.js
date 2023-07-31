@@ -401,4 +401,4 @@ const words = [
     'YARD'
 ]
 
-export default words
+// export default words
